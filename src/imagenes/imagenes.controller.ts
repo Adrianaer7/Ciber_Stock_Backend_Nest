@@ -1,0 +1,26 @@
+import { Controller, Post, UseGuards, UseInterceptors, UploadedFile, BadRequestException, Request } from '@nestjs/common';
+import { ImagenesService } from './imagenes.service';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import * as multer from 'multer';
+
+@Controller('imagenes')
+export class ImagenesController {
+  constructor(private readonly imagenesService: ImagenesService) {}
+
+  @UseGuards(AuthGuard)
+  @Post()
+  @UseInterceptors(
+    FileInterceptor('archivo', {
+      storage: multer.memoryStorage(), // Almacena en buffer
+      limits: { fileSize: 50 * 1024 * 1024 }, // 50MB máximo
+    })
+  )
+  guardarImagen(@Request() req: Request, @UploadedFile() file: Express.Multer.File) {
+    if(!file) {
+      throw new BadRequestException('La Imagen es Obligatoria')
+    }
+    return this.imagenesService.guardarImagen(req, file);
+  } 
+
+}

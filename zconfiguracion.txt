@@ -1,0 +1,31 @@
+DEPENDENCIAS
+"@nestjs/config": "^3.2.3",
+"@nestjs/mapped-types": "*",
+"@nestjs/typeorm": "^10.0.2",
+"@nestjs/jwt": "^10.2.0",
+"class-validator": "^0.14.1",
+"typeorm": "^0.3.20"
+"bcrypt": "^5.1.1",
+DEV DEPENDENCIAS
+"@types/multer": "^1.4.12",
+"@types/bcrypt"
+
+#crear app
+nest new nombreApp (previamente tener instalado el cli de nest - npm i -g @nestjs/cli)
+
+#arrancar servidor
+npm run dev (cambiar start:dev por dev en los scripts del package.json)
+
+#crear recurso entero
+nest g res nombreRecurso - esto crea modulo, controlador, service, dto y entities
+
+#generar modulos, controladores, servicios - de la misma manera que en angular - nest g  s mo co  ruta/ruta
+lo ideal es crear un modulo, y luego crear controladoresy  servicios ya que se van a crear dentro del modulo que tiene el mismo nombre
+
+TIPS
+usar reduce para acumular
+reemplazar moment por date-fns
+taskkill /IM node.exe /F    //mata todos los servidores corriendo
+
+A hacer
+implementar socket io
