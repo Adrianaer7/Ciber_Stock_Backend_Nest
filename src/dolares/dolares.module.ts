@@ -12,5 +12,6 @@ import { AuthModule } from 'src/auth/auth.module';
   ],
   controllers: [DolaresController],
   providers: [DolaresService],
+  exports: [DolaresService]
 })
 export class DolaresModule {}

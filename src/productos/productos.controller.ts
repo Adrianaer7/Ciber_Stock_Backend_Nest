@@ -25,9 +25,10 @@ export class ProductosController {
     return this.productosService.elProducto(req, id);
   }
 
+  @UseGuards(AuthGuard)
   @Put(':id')
   editarUnProducto(@Request() req: Request, @Param('id') id: string, @Body() updateProductoDto: UpdateProductoDto) {
-    return this.productosService.editarUnProducto(req, id, updateProductoDto);
+    return this.productosService.editarUnProducto(req, id, updateProductoDto, true);
   }
 
   @UseGuards(AuthGuard)

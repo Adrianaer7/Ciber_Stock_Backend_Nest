@@ -25,10 +25,12 @@ async function bootstrap() {
 
   // Habilitar CORS
   app.enableCors({
-    origin: 'http://localhost:3000', // Permite solicitudes desde este origen
+    origin: 'http://localhost:3000',
     methods: 'GET,PUT,POST,DELETE',
-    credentials: true,
-  });
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+});
+
   await app.listen(environments.PORT);
   console.log(`Servidor conectado ${environments.PORT}`)
 }

@@ -23,6 +23,7 @@ import { FaltantesModule } from './faltantes/faltantes.module';
 import { PorcentajesModule } from './porcentajes/porcentajes.module';
 import { GarantiasModule } from './garantias/garantias.module';
 import { ImagenesModule } from './imagenes/imagenes.module';
+import { WebSocketModule } from './web-socket/web-socket.module';
 
 
 @Module({
@@ -59,6 +60,7 @@ import { ImagenesModule } from './imagenes/imagenes.module';
     PorcentajesModule,
     GarantiasModule,
     ImagenesModule,
+    WebSocketModule,
   ],
   controllers: [AppController],
   providers: [

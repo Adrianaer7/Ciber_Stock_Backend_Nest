@@ -12,6 +12,8 @@ import { UpdateVentaDto } from 'src/ventas/dto/update-venta.dto';
 import { PorcentajesService } from 'src/porcentajes/porcentajes.service';
 import { Porcentajes } from 'src/porcentajes/entities/porcentajes.entity';
 import { ImagenesService } from 'src/imagenes/imagenes.service';
+import { SocketService } from 'src/web-socket/web-socket.service';
+import { DolaresService } from 'src/dolares/dolares.service';
 
 
 @Injectable()
@@ -20,6 +22,8 @@ export class ProductosService {
     @InjectRepository(Productos)
     private readonly productosRepository: Repository<Productos>,
     private readonly porcentajeService: PorcentajesService,
+    private readonly dolarService: DolaresService,
+    private readonly socketService: SocketService,
 
     @Inject(forwardRef(() => VentasService))  //Uso el forwardRef cuando dos módulos se importan mutuamente. Por ej, producto importa ventas, pero el modulo de ventas importa productos
     private readonly ventasService: VentasService,
@@ -149,7 +153,7 @@ export class ProductosService {
   }
 
 
-  async editarUnProducto(req: Request, id: string, updateProductoDto: UpdateProductoDto) {
+  async editarUnProducto(req: Request, id: string, updateProductoDto: UpdateProductoDto, cliente?: boolean) {
     const { codigo, nombre, marca, modelo, barras, proveedor, notas, imagen } = updateProductoDto.producto
 
     const producto: Productos | boolean = await this.findOne(req, id)
@@ -201,11 +205,18 @@ export class ProductosService {
 
     Object.assign(producto, updateProductoDto.producto)
 
+    updateProductoDto.producto = await this.calcularPrecios(req, updateProductoDto.producto, updateProductoDto.precio)
+
     //Para asegurarme no guardo los datos que vienen del front
     updateProductoDto.producto._id = _id
     updateProductoDto.producto.creador = creador
+
+
     try {
       const producto = await this.productosRepository.save(updateProductoDto.producto)
+      if(cliente) {
+        await this.socketService.emitirProductos()
+      }
       return { producto }
     } catch (error) {
       console.log(error)
@@ -222,62 +233,28 @@ export class ProductosService {
     try {
       let { productos } = await this.todosProductos(req)
 
-      if (productos.length) {
+      //modifico los productos a medida que se van recorriendo
+      const productoCambiado = async (producto) => {
+        await this.editarUnProducto(req, producto._id, { producto })
+      }
 
-        let porcentajeEfectivo: Porcentajes | boolean = await this.porcentajeService.findOneBy(req, "EFECTIVO")
-        let porcentajeTarjeta: Porcentajes | boolean = await this.porcentajeService.findOneBy(req, "TARJETA")
-        let porcentajeAhoraDoce: Porcentajes | boolean = await this.porcentajeService.findOneBy(req, "AHORADOCE")
-
-        //modifico los productos a medida que se van recorriendo
-        const productoCambiado = async (producto) => {
-          await this.editarUnProducto(req, producto._id, { producto })
-        }
-
+      if (productos.length) {      
 
         productos.forEach(producto => {
-          let { precio_venta, valor_dolar_compra, precio_compra_peso } = producto;
+          let { precio_venta } = producto;
 
           //en caso de que modifique el precio a 0, se reinician estos valores
           if (!precio_venta) {
             producto.precio_venta_ahoraDoce = 0
             producto.precio_venta_cuotas = 0
-
             productoCambiado(producto)
-          }
-
-          //comprado a valor dolar
-          if (precio_venta > 0 && valor_dolar_compra > 0) {
-            const res1 = Number(precio_venta) / Number(valor_dolar_compra);
-            const res2 = parseFloat((res1 * Number(precio)).toFixed(2));
-
-            producto.precio_venta_conocidos = res2;
-            producto.precio_venta_efectivo = calcularPrecio(res2, porcentajeEfectivo.comision);
-            producto.precio_venta_tarjeta = calcularPrecio(res2, porcentajeTarjeta.comision);
-            producto.precio_venta_ahoraDoce = calcularPrecio(parseFloat(producto.precio_venta_tarjeta.toString()), porcentajeAhoraDoce.comision);
-            producto.precio_venta_cuotas = parseFloat((parseFloat(producto.precio_venta_ahoraDoce.toString()) / 12).toFixed(2));
-
-            productoCambiado(producto);
-          }
-
-          function calcularPrecio(precioBase, comision) {
-            return parseFloat(((precioBase * (100 + Number(comision))) / 100).toFixed(2));
-          }
-
-
-          //comprado en pesos
-          if (precio_venta > 0 && precio_compra_peso > 0) {
-            const res1 = parseFloat((precio_venta / valor_dolar_compra).toFixed(2));
-            const res2 = parseFloat((res1 * precio).toFixed(2));
-
-            producto.precio_venta_conocidos = res2;
-            producto.precio_venta_efectivo = calcularPrecio(res2, porcentajeEfectivo.comision);
-            producto.precio_venta_tarjeta = calcularPrecio(res2, porcentajeTarjeta.comision);
-            producto.precio_venta_ahoraDoce = calcularPrecio(parseFloat(producto.precio_venta_tarjeta.toString()), porcentajeAhoraDoce.comision);
-            producto.precio_venta_cuotas = parseFloat((parseFloat(producto.precio_venta_ahoraDoce.toString()) / 12).toFixed(2));
-
-            productoCambiado(producto);
+          } else {
+            productoCambiado(this.calcularPrecios(req, producto, precio));
           }
         })
+
+        
+
         return
 
       } else {
@@ -287,6 +264,49 @@ export class ProductosService {
     } catch (error) {
       console.log(error)
     }
+  }
+
+  async calcularPrecios(req: Request, producto: CreateProductoDto, precio?: Number) {
+    let { precio_venta, valor_dolar_compra, precio_compra_peso } = producto;
+
+
+    let porcentajeEfectivo: Porcentajes | boolean = await this.porcentajeService.findOneBy(req, "EFECTIVO")
+    let porcentajeTarjeta: Porcentajes | boolean = await this.porcentajeService.findOneBy(req, "TARJETA")
+    let porcentajeAhoraDoce: Porcentajes | boolean = await this.porcentajeService.findOneBy(req, "AHORADOCE")
+
+    if(!precio) {
+      const dolar = await this.dolarService.findOne(req)
+      precio = Number(dolar.precio)
+    }
+
+    //compro en dolar
+    if (precio_venta > 0 && valor_dolar_compra > 0) {
+      const res1 = Number(precio_venta) / Number(valor_dolar_compra);
+      const res2 = parseFloat((res1 * Number(precio)).toFixed(2));
+      producto.precio_venta_conocidos = res2;
+      producto.precio_venta_efectivo = this.calcularPrecio(res2, porcentajeEfectivo.comision);
+      producto.precio_venta_tarjeta = this.calcularPrecio(res2, porcentajeTarjeta.comision);
+      producto.precio_venta_ahoraDoce = this.calcularPrecio(parseFloat(producto.precio_venta_tarjeta.toString()), porcentajeAhoraDoce.comision);
+      producto.precio_venta_cuotas = parseFloat((parseFloat(producto.precio_venta_ahoraDoce.toString()) / 12).toFixed(2));
+    }
+
+    //compro en peso
+    if (precio_venta > 0 && precio_compra_peso > 0) {
+      const res1 = parseFloat((precio_venta / valor_dolar_compra).toFixed(2));
+      const res2 = parseFloat((Number(res1) * Number(precio)).toFixed(2));
+      producto.precio_venta_conocidos = res2;
+      producto.precio_venta_efectivo = this.calcularPrecio(res2, porcentajeEfectivo.comision);
+      producto.precio_venta_tarjeta = this.calcularPrecio(res2, porcentajeTarjeta.comision);
+      producto.precio_venta_ahoraDoce = this.calcularPrecio(parseFloat(producto.precio_venta_tarjeta.toString()), porcentajeAhoraDoce.comision);
+      producto.precio_venta_cuotas = parseFloat((parseFloat(producto.precio_venta_ahoraDoce.toString()) / 12).toFixed(2));
+    }
+
+    return producto
+
+  }
+
+  calcularPrecio(precioBase, comision) {
+    return parseFloat(((precioBase * (100 + Number(comision))) / 100).toFixed(2));
   }
 
 

@@ -7,6 +7,8 @@ import { AuthModule } from 'src/auth/auth.module';
 import { VentasModule } from 'src/ventas/ventas.module';
 import { PorcentajesModule } from 'src/porcentajes/porcentajes.module';
 import { ImagenesModule } from 'src/imagenes/imagenes.module';
+import { WebSocketModule } from 'src/web-socket/web-socket.module';
+import { DolaresModule } from 'src/dolares/dolares.module';
 
 @Module({
   imports: [
@@ -14,7 +16,9 @@ import { ImagenesModule } from 'src/imagenes/imagenes.module';
     forwardRef(() => VentasModule),
     forwardRef(() => ImagenesModule),
     AuthModule,
-    PorcentajesModule
+    PorcentajesModule,
+    WebSocketModule,
+    DolaresModule
   ],
   controllers: [ProductosController],
   providers: [ProductosService],

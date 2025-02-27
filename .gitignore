@@ -42,6 +42,8 @@ lerna-debug.log*
 .env.production.local
 .env.local
 
+zdocumentacion.txt
+
 # temp directory
 .temp
 .tmp
