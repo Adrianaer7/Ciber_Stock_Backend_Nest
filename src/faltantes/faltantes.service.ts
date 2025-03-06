@@ -3,11 +3,15 @@ import { ProductosService } from 'src/productos/productos.service';
 import { Productos } from 'src/productos/entities/producto.entity';
 import { ObjectId } from 'mongodb';
 import { FindManyOptions } from 'typeorm';
+import { SocketService } from 'src/web-socket/web-socket.service';
 
 @Injectable()
 export class FaltantesService {
 
-  constructor(private readonly productosService: ProductosService) {}
+  constructor(
+    private readonly productosService: ProductosService,
+    private readonly socketService: SocketService
+  ) {}
 
   async crearFaltante(req: Request, id: string) {
     const product: Productos | boolean = await this.productosService.findOne(req, id)
@@ -19,6 +23,7 @@ export class FaltantesService {
       product.limiteFaltante = product.disponibles;
       product.añadirFaltante = true;
       const producto = await this.productosService.editarUnProducto(req, id, {producto: product})
+      await this.socketService.emitirProductos()
       return producto
     } else {
       return await this.eliminarFaltante(req, id, product)
@@ -26,11 +31,13 @@ export class FaltantesService {
 
   }
   
-  async eliminarFaltante(req: Request, id: string, producto: Productos) {
-    producto.faltante = false
-    producto.limiteFaltante = 0
-    producto.añadirFaltante = false
-    return await this.productosService.editarUnProducto(req, id, {producto})
+  async eliminarFaltante(req: Request, id: string, product: Productos) {
+    product.faltante = false
+    product.limiteFaltante = 0
+    product.añadirFaltante = false
+    const producto =  await this.productosService.editarUnProducto(req, id, {producto: product})
+    await this.socketService.emitirProductos()
+    return producto
   }
   
 

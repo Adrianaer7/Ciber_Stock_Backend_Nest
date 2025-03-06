@@ -7,14 +7,14 @@ export class FaltantesController {
   constructor(private readonly faltantesService: FaltantesService) {}
 
   @UseGuards(AuthGuard)
-  @Put(':id')
-  crearFaltante(@Request() req: Request, @Param() id: string) {
-    return this.faltantesService.crearFaltante(req, id);
-  }
-
-  @UseGuards(AuthGuard)
   @Get()
   todosFaltantes(@Request() req: Request) {
     return this.faltantesService.todosFaltantes(req);
+  }
+  
+  @UseGuards(AuthGuard)
+  @Put(':id')
+  crearFaltante(@Request() req: Request, @Param() id: string) {
+    return this.faltantesService.crearFaltante(req, id);
   }
 }
