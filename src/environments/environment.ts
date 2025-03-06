@@ -6,5 +6,6 @@ export const environments = {
     EMAIL_HOST:"smtp.mailtrap.io",
     EMAIL_PORT: 2525,
     EMAIL_USER:"fe59ab25e1170e",
-    EMAIL_PASS:"4499cbed6b3aaf"
+    EMAIL_PASS:"4499cbed6b3aaf",
+    DOLAR_URL: "https://mercados.ambito.com//dolar/informal/variacion"
 }

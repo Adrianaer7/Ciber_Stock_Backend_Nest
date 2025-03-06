@@ -4,7 +4,7 @@ import { SocketService } from './web-socket.service';
 
 @WebSocketGateway({
   cors: {
-    origin: 'http://localhost:3000', // Asegúrate de que sea la URL de tu frontend
+    origin: 'http://localhost:3000',
     credentials: true // Permite envío de cookies y autenticación
   }
 })

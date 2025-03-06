@@ -22,8 +22,10 @@ export class ProductosService {
     @InjectRepository(Productos)
     private readonly productosRepository: Repository<Productos>,
     private readonly porcentajeService: PorcentajesService,
-    private readonly dolarService: DolaresService,
     private readonly socketService: SocketService,
+
+    @Inject(forwardRef(() => DolaresService))
+    private readonly dolarService: DolaresService,
 
     @Inject(forwardRef(() => VentasService))  //Uso el forwardRef cuando dos módulos se importan mutuamente. Por ej, producto importa ventas, pero el modulo de ventas importa productos
     private readonly ventasService: VentasService,
@@ -156,7 +158,7 @@ export class ProductosService {
   async editarUnProducto(req: Request, id: string, updateProductoDto: UpdateProductoDto, cliente?: boolean) {
     const { codigo, nombre, marca, modelo, barras, proveedor, notas, imagen } = updateProductoDto.producto
 
-    const producto: Productos | boolean = await this.findOne(req, id)
+    const producto: Productos | boolean = await this.findOne(req, id) 
 
     if (!producto) {
       return { msg: "Producto no existe" }
@@ -207,13 +209,12 @@ export class ProductosService {
 
     updateProductoDto.producto = await this.calcularPrecios(req, updateProductoDto.producto, updateProductoDto.precio)
 
-    //Para asegurarme no guardo los datos que vienen del front
+    //Para asegurarme no guardo los datos que vienen del front 
     updateProductoDto.producto._id = _id
     updateProductoDto.producto.creador = creador
 
-
     try {
-      const producto = await this.productosRepository.save(updateProductoDto.producto)
+      const producto = await this.productosRepository.save(updateProductoDto.producto)  
       if(cliente) {
         await this.socketService.emitirProductos()
       }
@@ -223,43 +224,25 @@ export class ProductosService {
     }
   }
 
-  async editarProductos(req: Request, updateProductoDto: UpdateProductoDto) {
-    if (!updateProductoDto.precio) {
+  async editarProductos(req: Request, precio: number) {
+    if (!precio) {
       return new BadRequestException("Precio no válido")
     }
 
-    const { precio } = updateProductoDto
-
     try {
-      let { productos } = await this.todosProductos(req)
-
-      //modifico los productos a medida que se van recorriendo
-      const productoCambiado = async (producto) => {
-        await this.editarUnProducto(req, producto._id, { producto })
-      }
+      let { productos } = await this.todosProductos(req) 
 
       if (productos.length) {      
+        for (const producto of productos) {
+          const productoActualizado = await this.calcularPrecios(req, producto, precio); 
+          await this.productosRepository.save(productoActualizado)
+        }
 
-        productos.forEach(producto => {
-          let { precio_venta } = producto;
-
-          //en caso de que modifique el precio a 0, se reinician estos valores
-          if (!precio_venta) {
-            producto.precio_venta_ahoraDoce = 0
-            producto.precio_venta_cuotas = 0
-            productoCambiado(producto)
-          } else {
-            productoCambiado(this.calcularPrecios(req, producto, precio));
-          }
-        })
-
-        
-
-        return
+        return {productos: []}
 
       } else {
         return productos
-      }
+      }  
 
     } catch (error) {
       console.log(error)
@@ -268,7 +251,6 @@ export class ProductosService {
 
   async calcularPrecios(req: Request, producto: CreateProductoDto, precio?: Number) {
     let { precio_venta, valor_dolar_compra, precio_compra_peso } = producto;
-
 
     let porcentajeEfectivo: Porcentajes | boolean = await this.porcentajeService.findOneBy(req, "EFECTIVO")
     let porcentajeTarjeta: Porcentajes | boolean = await this.porcentajeService.findOneBy(req, "TARJETA")

@@ -32,13 +32,6 @@ export class ProductosController {
   }
 
   @UseGuards(AuthGuard)
-  @Put()
-  @HttpCode(HttpStatus.OK)
-  editarProductos(@Request() req: Request, @Body() updateProductoDto: UpdateProductoDto) {
-    return this.productosService.editarProductos(req, updateProductoDto);
-  }
-
-  @UseGuards(AuthGuard)
   @Delete(':id')
   eliminarProducto(@Request() req: Request, @Param('id') id: string) {
     return this.productosService.eliminarProducto(req, id);
