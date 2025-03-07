@@ -6,12 +6,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Ventas } from './entities/venta.entity';
 import { Productos } from 'src/productos/entities/producto.entity';
 import { ProductosModule } from 'src/productos/productos.module';
+import { WebSocketModule } from 'src/web-socket/web-socket.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Ventas, Productos]),
     forwardRef(() => ProductosModule),
     AuthModule,
+    WebSocketModule
   ],
   controllers: [VentasController],
   providers: [VentasService],

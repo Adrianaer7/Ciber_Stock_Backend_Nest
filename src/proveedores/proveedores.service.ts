@@ -5,12 +5,14 @@ import { ObjectId } from 'mongodb';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Proveedores } from './entities/proveedor.entity';
 import { FindManyOptions, Repository } from 'typeorm';
+import { SocketService } from 'src/web-socket/web-socket.service';
 
 @Injectable()
 export class ProveedoresService {
   constructor(
     @InjectRepository(Proveedores)
-    private readonly proveedoresRepository: Repository<Proveedores>
+    private readonly proveedoresRepository: Repository<Proveedores>,
+    private readonly socketService: SocketService
   ) { }
 
   async agregarProveedor(req: Request, createProveedoreDto: CreateProveedorDto) {
@@ -27,6 +29,7 @@ export class ProveedoresService {
 
     try {
       const proveedor = await this.proveedoresRepository.save(nuevoProveedor)
+      await this.socketService.emitirProductos()
       return {proveedor}
     } catch (error) {
       throw new InternalServerErrorException(error);
@@ -92,6 +95,7 @@ export class ProveedoresService {
     updateProveedoreDto.creador = creador
 
     const provider =  this.proveedoresRepository.save(updateProveedoreDto)
+    await this.socketService.emitirProductos()
     return {proveedor: provider}
   }
 
@@ -104,6 +108,7 @@ export class ProveedoresService {
     }
 
     await this.proveedoresRepository.remove(proveedor)
+    await this.socketService.emitirProductos()
     return { msg: "Proveedor eliminado" }
   }
 

@@ -7,6 +7,7 @@ import { Ventas } from './entities/venta.entity';
 import { FindManyOptions, Repository } from 'typeorm';
 import { Productos } from 'src/productos/entities/producto.entity';
 import { ProductosService } from 'src/productos/productos.service';
+import { SocketService } from 'src/web-socket/web-socket.service';
 
 @Injectable()
 export class VentasService {
@@ -14,11 +15,12 @@ export class VentasService {
   constructor(
     @InjectRepository(Ventas)
     private readonly ventasRepository: Repository<Ventas>,
+    private readonly socketService: SocketService,
     @Inject(forwardRef(() => ProductosService))
     private readonly productosService: ProductosService
   ) { }
 
-  agregarVenta(req: Request, createVentaDto: CreateVentaDto) {
+  async agregarVenta(req: Request, createVentaDto: CreateVentaDto) {
     const creador = new ObjectId(req['usuario']._id)
 
     const nuevaVenta = this.ventasRepository.create({
@@ -28,6 +30,7 @@ export class VentasService {
 
     try {
       const venta =  this.ventasRepository.save(nuevaVenta)
+      await this.socketService.emitirProductos()
       return {venta}
     } catch (error) {
       if (error.console.log('error') === 11000) {
@@ -128,6 +131,7 @@ export class VentasService {
     //Actualizo las unidades vendidas del producto
     updateVentaDto.unidades = venta.unidades - updateVentaDto.cantidad
     const laVenta =  await this.ventasRepository.save(updateVentaDto)
+    await this.socketService.emitirProductos()
     return {venta: laVenta}
   }
 
@@ -150,6 +154,7 @@ export class VentasService {
 
     //Elimino la venta
     await this.ventasRepository.remove(venta)
+    await this.socketService.emitirProductos()
     return { msg: "Venta eliminada" }
   }
 

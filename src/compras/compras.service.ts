@@ -6,6 +6,7 @@ import { FindManyOptions, Repository } from 'typeorm';
 import { Productos } from 'src/productos/entities/producto.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductosService } from 'src/productos/productos.service';
+import { SocketService } from 'src/web-socket/web-socket.service';
 
 @Injectable()
 export class ComprasService {
@@ -13,13 +14,14 @@ export class ComprasService {
   constructor(
     @InjectRepository(Compras)
     private readonly comprasRepository: Repository<Compras>,
-    private readonly productosService: ProductosService
-
+    private readonly productosService: ProductosService,
+    private readonly socketService: SocketService
   ) { }
 
   async crearCompra(req: Request, createCompraDto: CreateCompraDto) {
     const creador = new ObjectId(req['usuario']._id)
     let arsAdolar: string
+    let purchase: Compras
 
     const {nombre, marca, modelo, codigo, precio_compra_dolar, precio_compra_peso, valor_dolar_compra, proveedor, garantia, factura, barras, fecha_compra, notas} = createCompraDto.producto
 
@@ -59,7 +61,7 @@ export class ComprasService {
         garantia
       })
 
-      return this.comprasRepository.save(laCompra)
+      purchase =  await this.comprasRepository.save(laCompra)
     } 
 
     if (compra && createCompraDto.cantidad ) {    //si existe el producto en el listado de compras y la cantidad es mayora a 0, edito el producto entero
@@ -72,7 +74,7 @@ export class ComprasService {
       compraPasada.descripcion = (nombre + marca + modelo  + barras + factura + notas).replace(/\s\s+/g, ' ').replace(/\s+/g, '')
       compraPasada.creado =  new Date()
 
-      return this.comprasRepository.save(compraPasada)
+      purchase = await this.comprasRepository.save(compraPasada)
     }
 
     if(compra && !createCompraDto.cantidad ) {   //si el producto existe en el listado de compras y no existe cantidad, es porque se modifico algun otro campo del objeto, entonces guardo solo lo modificado
@@ -82,8 +84,11 @@ export class ComprasService {
       compraPasada.modelo = modelo
       compraPasada.descripcion = (nombre + marca + modelo  + barras + factura + notas).replace(/\s\s+/g, ' ').replace(/\s+/g, '')
 
-      return this.comprasRepository.save(compraPasada)
-  }
+      purchase =  await this.comprasRepository.save(compraPasada)
+    }
+
+    await this.socketService.emitirCompras()
+    return purchase
 
 
   }

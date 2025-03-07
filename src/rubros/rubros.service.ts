@@ -7,7 +7,7 @@ import { Rubros } from './entities/rubro.entity';
 import { FindManyOptions, Repository } from 'typeorm';
 import { Productos } from 'src/productos/entities/producto.entity';
 import { ProductosService } from 'src/productos/productos.service';
-import { UpdateProductoDto } from 'src/productos/dto/update-producto.dto';
+import { SocketService } from 'src/web-socket/web-socket.service';
 
 @Injectable()
 export class RubrosService {
@@ -17,7 +17,8 @@ export class RubrosService {
     private readonly rubrosRepository: Repository<Rubros>,
     @InjectRepository(Productos)
     private readonly productosRepository: Repository<Productos>,
-    private readonly productosService: ProductosService
+    private readonly productosService: ProductosService,
+    private readonly socketService: SocketService,
   ) {}
 
   async agregarRubro(req: Request, createRubroDto: CreateRubroDto) {
@@ -31,6 +32,7 @@ export class RubrosService {
 
     try {
       const rubro =  await this.rubrosRepository.save(nuevoRubro)
+      await this.socketService.emitirRubros()
       return {rubro}
     } catch (error) {
       if( error.code === 11000 ) {
@@ -120,6 +122,7 @@ export class RubrosService {
     }
 
     const category =  await this.rubrosRepository.save(updateRubroDto)
+    await this.socketService.emitirRubros()
     return {rubro: category}
   }
 
@@ -132,6 +135,7 @@ export class RubrosService {
     }
 
     await this.rubrosRepository.remove(rubro)
+    await this.socketService.emitirRubros()
     return {msg: "Rubro eliminado"} 
   }
 
