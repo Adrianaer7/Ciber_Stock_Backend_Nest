@@ -1,4 +1,4 @@
-import { BadRequestException, forwardRef, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateVentaDto } from './dto/create-venta.dto';
 import { UpdateVentaDto } from './dto/update-venta.dto';
 import { ObjectId } from 'mongodb';
@@ -61,7 +61,7 @@ export class VentasService {
   async laVenta(req: Request, id: string) {
     const venta: Ventas | boolean = await this.findOne(req, id)
     if (!venta) {
-      return { msg: "La venta no existe" }
+      throw new NotFoundException("La venta no existe")
     }
 
     return venta
@@ -107,12 +107,12 @@ export class VentasService {
   async editarVenta(req: Request, id: string, updateVentaDto: UpdateVentaDto) {
     const venta: Ventas | boolean = await this.findOne(req, id)
     if (!venta) {
-      return { msg: "El Venta no existe" }
+      throw new NotFoundException("La venta no existe")
     }
 
     const producto: Productos | boolean = await this.productosService.findOne(req, updateVentaDto.idProducto)
     if (!producto) {
-      return { msg: "No se pueden devolver las unidades porque el producto ya no existe" }
+      throw new BadRequestException("No se pueden devolver las unidades porque el producto ya no existe") 
     }
 
     const creador = new ObjectId(req['usuario']._id)
@@ -140,12 +140,12 @@ export class VentasService {
   async eliminarVenta(req: Request, id: string) {
     const venta: Ventas | boolean = await this.findOne(req, id)
     if (!venta) {
-      return { msg: "No se encontró la venta a eliminar" }
+      throw new NotFoundException("No se encontró la venta a eliminar")
     }
 
     const producto: Productos | boolean = await this.productosService.findOne(req, venta.idProducto.toString())
     if (!producto) {
-      return { msg: "No se pueden devolver las unidades porque el producto ya no existe" }
+    throw new BadRequestException("No se pueden devolver las unidades porque el producto ya no existe")
     }
 
     //Actualizo las unidades del producto

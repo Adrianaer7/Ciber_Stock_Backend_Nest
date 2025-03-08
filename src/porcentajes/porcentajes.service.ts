@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePorcentajeDto } from './dto/create-porcentaje.dto';
 import { UpdatePorcentajeDto } from './dto/update-porcentaje.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -37,7 +37,7 @@ export class PorcentajesService {
   async elPorcentaje(req: Request, id: string) {
     const porcentaje: Porcentajes | boolean = await this.findOne(req, id)
     if (!porcentaje) {
-      return { msg: "El porcentaje no existe" }
+      throw new NotFoundException("El porcentaje no existe")
     }
 
     return {porcentaje}
@@ -81,7 +81,7 @@ export class PorcentajesService {
   async editarPorcentaje(req: Request, updatePorcentajeDto: UpdatePorcentajeDto, id: string) {
     const porcentaje: Porcentajes | boolean = await this.findOne(req, id)
     if (!porcentaje) {
-      return { msg: "El porcentaje no existe" }
+      throw new NotFoundException("El porcentaje no existe")
     }
 
     const creador = new ObjectId(req['usuario']._id)
@@ -101,7 +101,7 @@ export class PorcentajesService {
   async eliminarPorcentaje(req: Request, id: string) {
     const porcentaje: Porcentajes | boolean = await this.findOne(req, id)
     if (!porcentaje) {
-      return { msg: "El porcentaje no existe" }
+      throw new NotFoundException("El porcentaje no existe")
     }
 
     await this.porcentajesRepository.remove(porcentaje)

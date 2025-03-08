@@ -47,7 +47,7 @@ export class UsuariosService {
         if( error.code === 11000 ) {
           throw new BadRequestException(`El correo ${ createUsuarioDto.email } ya existe`)
         }
-        throw new InternalServerErrorException();
+        throw new InternalServerErrorException(error);
       }
   }
 
@@ -114,12 +114,12 @@ export class UsuariosService {
 
 
   async nuevoPassword(token: string, nuevaPasswordDto: NuevaPasswordDto) {
-    const {password} = nuevaPasswordDto
+    const {contraseña} = nuevaPasswordDto
 
     const usuario = await this.userRepository.findOneBy({token})
     if(!usuario) throw new NotFoundException("Token no válido")
 
-    usuario.password = bcrypt.hashSync( password, 10 ),
+    usuario.password = bcrypt.hashSync( contraseña, 10 ),
     usuario.token = ""
 
     this.userRepository.save(usuario)

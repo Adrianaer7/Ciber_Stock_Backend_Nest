@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateRubroDto } from './dto/create-rubro.dto';
 import { UpdateRubroDto } from './dto/update-rubro.dto';
 import { ObjectId } from 'mongodb';
@@ -57,7 +57,7 @@ export class RubrosService {
   async elRubro(req: Request, id: string) {
     const rubro: Rubros | boolean = await this.findOne(req, id)
     if(!rubro) {
-      return {msg: "El rubro no existe"}
+      throw new NotFoundException("El rubro no existe")
     }
 
     return {rubro}
@@ -89,7 +89,7 @@ export class RubrosService {
   async editarRubro(req: Request, id: string,  updateRubroDto: UpdateRubroDto) {
     const rubro: Rubros | boolean = await this.findOne(req, id)
     if(!rubro) {
-      return {msg: "El rubro no existe"}
+      throw new NotFoundException("El rubro no existe")
     }
 
     const creador = new ObjectId(req['usuario']._id)
@@ -131,7 +131,7 @@ export class RubrosService {
   async eliminarRubro(req: Request, id: string) {
     const rubro: Rubros | boolean = await this.findOne(req, id)
     if(!rubro) {
-      return {msg: "El rubro no existe"}
+      throw new NotFoundException("El rubro no existe")
     }
 
     await this.rubrosRepository.remove(rubro)

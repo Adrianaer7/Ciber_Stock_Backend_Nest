@@ -1,4 +1,4 @@
-import { BadRequestException, forwardRef, HttpCode, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Productos } from './entities/producto.entity';
@@ -161,7 +161,7 @@ export class ProductosService {
     const producto: Productos | boolean = await this.findOne(req, id) 
 
     if (!producto) {
-      return { msg: "Producto no existe" }
+      throw new NotFoundException("Producto no existe")
     }
 
     let creador: ObjectId;
@@ -302,7 +302,7 @@ export class ProductosService {
   async eliminarProducto(req: Request, id: string) {
     const producto: Productos | boolean = await this.findOne(req, id)
     if (!producto) {
-      return { msg: "Producto no encontrado" }
+      throw new NotFoundException("Producto no encontrado")
     }
 
     //para que al mostrar las ventas, no muestre opcion de eliminar o editar la venta

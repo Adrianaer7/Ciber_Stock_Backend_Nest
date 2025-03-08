@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, BadRequestException, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, BadRequestException, UseGuards, Request, HttpCode } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { ChangePasswordDto } from './dto/cambiarPassword.dto';
@@ -47,6 +47,7 @@ export class UsuariosController {
   }
   
   @UseGuards(ThrottlerGuard)
+  @HttpCode(200)
   @Post('/olvide-password/:token')
   nuevoPassword( @Param('token') token: string, @Body() nuevaPasswordDto: NuevaPasswordDto) {
     return this.usuariosService.nuevoPassword(token, nuevaPasswordDto);

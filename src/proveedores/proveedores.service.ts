@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateProveedorDto } from './dto/create-proveedore.dto';
 import { UpdateProveedorDto } from './dto/update-proveedore.dto';
 import { ObjectId } from 'mongodb';
@@ -50,7 +50,7 @@ export class ProveedoresService {
   async elProveedor(req: Request, id: string) {
     const proveedor: Proveedores | boolean = await this.findOne(req, id)
     if (!proveedor) {
-      return { msg: "El proveedor no existe" }
+      throw new NotFoundException("El proveedor no existe")
     }
     return {proveedor}
   }
@@ -82,7 +82,7 @@ export class ProveedoresService {
     const proveedor: Proveedores | boolean = await this.findOne(req, id)
 
     if (!proveedor) {
-      return { msg: "Proveedor no existe" }
+      throw new NotFoundException("El proveedor no existe")
     }
 
     const creador = new ObjectId(req['usuario']._id)
@@ -104,7 +104,7 @@ export class ProveedoresService {
   async eliminarProveedor(req: Request, id: string) {
     const proveedor: Proveedores | boolean = await this.findOne(req, id)
     if (!proveedor) {
-      return { msg: "El proveedor no existe" }
+      throw new NotFoundException("El proveedor no existe")
     }
 
     await this.proveedoresRepository.remove(proveedor)

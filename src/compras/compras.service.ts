@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCompraDto } from './dto/create-compra.dto';
 import { ObjectId } from 'mongodb';
 import { Compras } from './entities/compra.entity';
@@ -28,7 +28,7 @@ export class ComprasService {
 
     const producto: Productos | boolean = await this.productosService.findOneByCode(req, codigo)
     if(!producto) {
-      return {msg: "Producto no encontrado"}
+      throw new NotFoundException("Producto no encontrado")
     }
 
     const compra: Compras | boolean = await this.findOne(req, producto._id.toString())

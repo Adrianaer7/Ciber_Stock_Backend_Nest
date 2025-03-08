@@ -1,8 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ProductosService } from 'src/productos/productos.service';
 import { Productos } from 'src/productos/entities/producto.entity';
-import { ObjectId } from 'mongodb';
-import { FindManyOptions } from 'typeorm';
 import { SocketService } from 'src/web-socket/web-socket.service';
 
 @Injectable()
@@ -16,7 +14,7 @@ export class FaltantesService {
   async crearFaltante(req: Request, id: string) {
     const product: Productos | boolean = await this.productosService.findOne(req, id)
     if (!product) {
-      return { msg: "El producto no existe" }
+      throw new NotFoundException("El producto no existe")
     }
     if(!product.faltante) {
       product.faltante = true;
