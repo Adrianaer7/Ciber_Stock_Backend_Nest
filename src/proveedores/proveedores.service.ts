@@ -18,7 +18,7 @@ export class ProveedoresService {
   async agregarProveedor(req: Request, createProveedoreDto: CreateProveedorDto) {
     const { nombre, empresa, telEmpresa, telPersonal, email } = createProveedoreDto
 
-    const datos = (nombre + empresa + telPersonal + telEmpresa + email).replace(/\s\s+/g, ' ').replace(/\s+/g, '')
+    const datos = (nombre + empresa + telPersonal + telEmpresa + email).replace(/\s\s+/g, ' ').replace(/\s+/g, '').toUpperCase()
     const creador = new ObjectId(req['usuario']._id)
 
     let nuevoProveedor = this.proveedoresRepository.create({
@@ -84,6 +84,8 @@ export class ProveedoresService {
     if (!proveedor) {
       throw new NotFoundException("El proveedor no existe")
     }
+    
+    const { nombre, empresa, telEmpresa, telPersonal, email } = updateProveedoreDto
 
     const creador = new ObjectId(req['usuario']._id)
     const _id = new ObjectId(proveedor._id)
@@ -93,6 +95,7 @@ export class ProveedoresService {
     //Para asegurarme no guardo los datos que vienen del front
     updateProveedoreDto._id = _id
     updateProveedoreDto.creador = creador
+    updateProveedoreDto.datos = (nombre + empresa + telPersonal + telEmpresa + email).replace(/\s\s+/g, ' ').replace(/\s+/g, '').toUpperCase()
 
     const provider =  this.proveedoresRepository.save(updateProveedoreDto)
     await this.socketService.emitirProductos()

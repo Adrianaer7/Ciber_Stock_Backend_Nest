@@ -34,6 +34,3 @@ TIPS
 usar reduce para acumular
 reemplazar moment por date-fns
 taskkill /IM node.exe /F    //mata todos los servidores corriendo
-
-A hacer
-implementar socket io

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Request, Delete } from '@nestjs/common';
 import { ComprasService } from './compras.service';
 import { CreateCompraDto } from './dto/create-compra.dto';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
@@ -17,5 +17,11 @@ export class ComprasController {
   @Get()
   traerCompras(@Request() req: Request) {
     return this.comprasService.traerCompras(req);
+  }
+
+  @UseGuards(AuthGuard)
+  @Delete()
+  eliminarTodas(@Request() req: Request) {
+    return this.comprasService.eliminarTodas(req);
   }
 }

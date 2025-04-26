@@ -29,7 +29,7 @@ export class VentasService {
     })
 
     try {
-      const venta =  this.ventasRepository.save(nuevaVenta)
+      const venta =  await this.ventasRepository.save(nuevaVenta)
       await this.socketService.emitirProductos()
       return {venta}
     } catch (error) {

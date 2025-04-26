@@ -102,7 +102,7 @@ export class ComprasService {
     const options: FindManyOptions<Compras> = {
       where: {
         creador,
-        _id
+        idProducto: _id
       }
     }
 
@@ -126,6 +126,20 @@ export class ComprasService {
     let todas = await this.comprasRepository.find(options)
     todas = todas.map(compras => compras.historial.sort((a,b) => a.fecha_compra > b.fecha_compra ? 1 : -1) && compras )
     return {todas}
+  }
+
+  async eliminarTodas(req: Request) {
+    const creador = new ObjectId(req['usuario']._id)
+    const options: FindManyOptions<Compras> = { where: { creador } }
+
+    const productos = await this.comprasRepository.find(options)
+    if (!productos.length) {
+      return { msg: "No se encontraron compras a eliminar" }
+    }
+
+    await this.comprasRepository.remove(productos)
+
+    return { msg: "Todos las compras se eliminaron" }
   }
 
 }
