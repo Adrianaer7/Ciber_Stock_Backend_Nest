@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumberString, IsOptional, IsString, Matches, Min } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString, Min } from "class-validator";
 import { ObjectId } from "mongodb";
 
 export class CreateRubroDto {

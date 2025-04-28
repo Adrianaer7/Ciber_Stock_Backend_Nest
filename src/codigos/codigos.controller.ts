@@ -1,6 +1,7 @@
 import { Controller, Get, Request, UseGuards } from '@nestjs/common';
 import { CodigosService } from './codigos.service';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { RequestConUsuario } from 'src/helpers/interfaces';
 
 @Controller('codigos')
 export class CodigosController {
@@ -8,7 +9,7 @@ export class CodigosController {
 
   @UseGuards(AuthGuard)
   @Get()
-  todosCodigos(@Request() req: Request) {
+  todosCodigos(@Request() req: RequestConUsuario) {
     return this.codigosService.todosCodigos(req);
   }
 

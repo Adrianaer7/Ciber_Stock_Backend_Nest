@@ -3,6 +3,7 @@ import { RubrosService } from './rubros.service';
 import { CreateRubroDto } from './dto/create-rubro.dto';
 import { UpdateRubroDto } from './dto/update-rubro.dto';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { RequestConUsuario } from 'src/helpers/interfaces';
 
 @Controller('rubros')
 export class RubrosController {
@@ -10,37 +11,37 @@ export class RubrosController {
 
   @UseGuards(AuthGuard)
   @Post()
-  agregarRubro(@Request() req: Request, @Body() createRubroDto: CreateRubroDto) {
+  agregarRubro(@Request() req: RequestConUsuario, @Body() createRubroDto: CreateRubroDto) {
     return this.rubrosService.agregarRubro(req, createRubroDto);
   }
 
   @UseGuards(AuthGuard)
   @Get()
-  todosRubros(@Request() req: Request) {
+  todosRubros(@Request() req: RequestConUsuario) {
     return this.rubrosService.todosRubros(req);
   }
 
   @UseGuards(AuthGuard)
   @Get(':id')
-  elRubro(@Request() req: Request, @Param('id') id: string) {
+  elRubro(@Request() req: RequestConUsuario, @Param('id') id: string) {
     return this.rubrosService.elRubro(req, id);
   }
 
   @UseGuards(AuthGuard)
   @Put(':id')
-  editarRubro(@Request() req: Request, @Param('id') id: string, @Body() updateRubroDto: UpdateRubroDto) {
+  editarRubro(@Request() req: RequestConUsuario, @Param('id') id: string, @Body() updateRubroDto: UpdateRubroDto) {
     return this.rubrosService.editarRubro(req, id, updateRubroDto);
   }
 
   @UseGuards(AuthGuard)
   @Delete(':id')
-  eliminarRubro(@Request() req: Request, @Param('id') id: string) {
+  eliminarRubro(@Request() req: RequestConUsuario, @Param('id') id: string) {
     return this.rubrosService.eliminarRubro(req, id);
   }
 
   @UseGuards(AuthGuard)
   @Delete()
-  eliminarTodos(@Request() req: Request) {
+  eliminarTodos(@Request() req: RequestConUsuario) {
     return this.rubrosService.eliminarTodos(req);
   }
 }

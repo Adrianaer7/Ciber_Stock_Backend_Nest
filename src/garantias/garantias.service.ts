@@ -6,6 +6,7 @@ import { Garantias } from './entities/garantia.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductosService } from 'src/productos/productos.service';
 import { Productos } from 'src/productos/entities/producto.entity';
+import { RequestConUsuario } from 'src/helpers/interfaces';
 
 @Injectable()
 export class GarantiasService {
@@ -15,13 +16,13 @@ export class GarantiasService {
     private readonly productosService: ProductosService
   ) { }
 
-  async crearGarantia(req: Request, createGarantiaDto: CreateGarantiaDto) {
+  async crearGarantia(req: RequestConUsuario, createGarantiaDto: CreateGarantiaDto) {
     const { codigo, garantia, proveedor } = createGarantiaDto
 
     const producto: Productos | boolean = await this.productosService.findOneByCode(req, createGarantiaDto.codigo)
     if (producto) {
       const laGarantia: Garantias | boolean = await this.findOneByProductId(req, producto._id)
-      const creador = new ObjectId(req['usuario']._id)
+      const creador = new ObjectId(req.usuario._id)
 
       //si no existe una garantia con el id del producto, creo una nueva
       if (!laGarantia) {
@@ -57,8 +58,8 @@ export class GarantiasService {
     }
   }
 
-  async findOneByProductId(req: Request, idProducto: ObjectId) {
-    const creador = new ObjectId(req['usuario']._id)
+  async findOneByProductId(req: RequestConUsuario, idProducto: ObjectId) {
+    const creador = new ObjectId(req.usuario._id)
     const options: FindManyOptions<Garantias> = {
       where: {
         creador,
@@ -74,8 +75,8 @@ export class GarantiasService {
 
 
 
-  async traerGarantias(req: Request) {
-    const creador = new ObjectId(req['usuario']._id)
+  async traerGarantias(req: RequestConUsuario) {
+    const creador = new ObjectId(req.usuario._id)
     const options: FindManyOptions<Garantias> = { where: { creador } }
     const garantias = await this.garantiasRepository.find(options)
     return { garantias }

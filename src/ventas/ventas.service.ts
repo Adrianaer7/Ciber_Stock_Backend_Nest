@@ -8,6 +8,7 @@ import { FindManyOptions, Repository } from 'typeorm';
 import { Productos } from 'src/productos/entities/producto.entity';
 import { ProductosService } from 'src/productos/productos.service';
 import { SocketService } from 'src/web-socket/web-socket.service';
+import { RequestConUsuario } from 'src/helpers/interfaces';
 
 @Injectable()
 export class VentasService {
@@ -20,8 +21,8 @@ export class VentasService {
     private readonly productosService: ProductosService
   ) { }
 
-  async agregarVenta(req: Request, createVentaDto: CreateVentaDto) {
-    const creador = new ObjectId(req['usuario']._id)
+  async agregarVenta(req: RequestConUsuario, createVentaDto: CreateVentaDto) {
+    const creador = new ObjectId(req.usuario._id)
 
     const nuevaVenta = this.ventasRepository.create({
       ...createVentaDto,
@@ -42,8 +43,8 @@ export class VentasService {
 
 
 
-  async todasVentas(req: Request) {
-    const creador = new ObjectId(req['usuario']._id)
+  async todasVentas(req: RequestConUsuario) {
+    const creador = new ObjectId(req.usuario._id)
     const options: FindManyOptions<Ventas> = {
       where: {
         creador
@@ -58,7 +59,7 @@ export class VentasService {
 
 
 
-  async laVenta(req: Request, id: string) {
+  async laVenta(req: RequestConUsuario, id: string) {
     const venta: Ventas | boolean = await this.findOne(req, id)
     if (!venta) {
       throw new NotFoundException("La venta no existe")
@@ -69,11 +70,11 @@ export class VentasService {
 
 
 
-  async findOne(req: Request, id: string) {
+  async findOne(req: RequestConUsuario, id: string) {
     if (!ObjectId.isValid(id)) return false
 
     const _id = new ObjectId(id)
-    const creador = new ObjectId(req['usuario']._id)
+    const creador = new ObjectId(req.usuario._id)
 
     const options: FindManyOptions<Ventas> = {
       where: {
@@ -89,8 +90,8 @@ export class VentasService {
   }
 
 
-  async findOneByProductId(req: Request, idProducto: ObjectId) {
-    const creador = new ObjectId(req['usuario']._id)
+  async findOneByProductId(req: RequestConUsuario, idProducto: ObjectId) {
+    const creador = new ObjectId(req.usuario._id)
     const options: FindManyOptions<Ventas> = {
       where: {
         creador,
@@ -104,7 +105,7 @@ export class VentasService {
     return venta
   }
 
-  async editarVenta(req: Request, id: string, updateVentaDto: UpdateVentaDto) {
+  async editarVenta(req: RequestConUsuario, id: string, updateVentaDto: UpdateVentaDto) {
     const venta: Ventas | boolean = await this.findOne(req, id)
     if (!venta) {
       throw new NotFoundException("La venta no existe")
@@ -115,7 +116,7 @@ export class VentasService {
       throw new BadRequestException("No se pueden devolver las unidades porque el producto ya no existe")
     }
 
-    const creador = new ObjectId(req['usuario']._id)
+    const creador = new ObjectId(req.usuario._id)
     const _id = new ObjectId(venta._id)
 
     Object.assign(venta, updateVentaDto)
@@ -137,7 +138,7 @@ export class VentasService {
 
 
 
-  async eliminarVenta(req: Request, id: string) {
+  async eliminarVenta(req: RequestConUsuario, id: string) {
     const venta: Ventas | boolean = await this.findOne(req, id)
     if (!venta) {
       throw new NotFoundException("No se encontró la venta a eliminar")
@@ -160,8 +161,8 @@ export class VentasService {
 
 
 
-  async eliminarTodas(req: Request) {
-    const creador = new ObjectId(req['usuario']._id)
+  async eliminarTodas(req: RequestConUsuario) {
+    const creador = new ObjectId(req.usuario._id)
     const options: FindManyOptions<Ventas> = { where: { creador } }
 
     const ventas = await this.ventasRepository.find(options)

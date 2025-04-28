@@ -3,6 +3,7 @@ import { ImagenesService } from './imagenes.service';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as multer from 'multer';
+import { RequestConUsuario } from 'src/helpers/interfaces';
 
 @Controller('imagenes')
 export class ImagenesController {
@@ -16,7 +17,7 @@ export class ImagenesController {
       limits: { fileSize: 50 * 1024 * 1024 }, // 50MB máximo
     })
   )
-  guardarImagen(@Request() req: Request, @UploadedFile() file: Express.Multer.File) {
+  guardarImagen(@Request() req: RequestConUsuario, @UploadedFile() file: Express.Multer.File) {
     if (!file) {
       throw new BadRequestException('La Imagen es Obligatoria')
     }

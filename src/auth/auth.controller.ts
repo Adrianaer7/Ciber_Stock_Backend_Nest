@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { AuthGuard } from './guards/auth.guard';
 import { ThrottlerGuard } from '@nestjs/throttler';
+import { RequestConUsuario, Usuario } from 'src/helpers/interfaces';
 
 @Controller('auth')
 export class AuthController {
@@ -17,7 +18,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Get()
-  usuarioAutenticado(@Request() req: Request) {
-    return this.authService.usuarioAutenticado(req)
+  usuarioAutenticado(@Request() req: RequestConUsuario) {
+    return {usuario: req.usuario}
   }
 }

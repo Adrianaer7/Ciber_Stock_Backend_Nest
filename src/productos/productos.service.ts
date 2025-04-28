@@ -14,6 +14,7 @@ import { Porcentajes } from 'src/porcentajes/entities/porcentajes.entity';
 import { ImagenesService } from 'src/imagenes/imagenes.service';
 import { SocketService } from 'src/web-socket/web-socket.service';
 import { DolaresService } from 'src/dolares/dolares.service';
+import { RequestConUsuario } from 'src/helpers/interfaces';
 
 
 @Injectable()
@@ -34,7 +35,7 @@ export class ProductosService {
     private readonly imagenesService: ImagenesService
   ) { }
 
-  async crearProducto(req: Request, createProductoDto: CreateProductoDto) {
+  async crearProducto(req: RequestConUsuario, createProductoDto: CreateProductoDto) {
     const { codigo, nombre, marca, modelo, barras, proveedor, notas } = createProductoDto
 
     if (createProductoDto.disponibles <= createProductoDto.limiteFaltante && createProductoDto.añadirFaltante) {
@@ -42,7 +43,7 @@ export class ProductosService {
     }
 
     const descripcion = (codigo + nombre + marca + modelo + barras + notas).replace(/\s\s+/g, ' ').replace(/\s+/g, '').toUpperCase()
-    const creador = new ObjectId(req['usuario']._id)
+    const creador = new ObjectId(req.usuario._id)
 
     const nuevoProducto = this.productosRepository.create({
       ...createProductoDto,
@@ -64,8 +65,8 @@ export class ProductosService {
 
 
 
-  async todosProductos(req: Request) {
-    const creador = new ObjectId(req['usuario']._id)
+  async todosProductos(req: RequestConUsuario) {
+    const creador = new ObjectId(req.usuario._id)
     const options: FindManyOptions<Productos> = {
       where: {
         creador
@@ -78,8 +79,8 @@ export class ProductosService {
     return { productos }
   }
 
-  async todosProductosFaltantes(req: Request) {
-    const creador = new ObjectId(req['usuario']._id)
+  async todosProductosFaltantes(req: RequestConUsuario) {
+    const creador = new ObjectId(req.usuario._id)
     const options: FindManyOptions<Productos> = {
       where: {
         creador,
@@ -91,7 +92,7 @@ export class ProductosService {
 
 
 
-  async elProducto(req: Request, id: string) {
+  async elProducto(req: RequestConUsuario, id: string) {
     const producto: Productos | boolean = await this.findOne(req, id)
     if (!producto) {
       return { redireccionar: true }
@@ -101,15 +102,15 @@ export class ProductosService {
 
 
 
-  async findOne(req: Request, id: string) {
+  async findOne(req: RequestConUsuario, id: string) {
     if (!ObjectId.isValid(id)) return false
 
     const _id = new ObjectId(id)
     let creador: ObjectId;
     let options: FindManyOptions<Productos>;
 
-    if (req['usuario']) {
-      creador = new ObjectId(req['usuario']._id)
+    if (req.usuario) {
+      creador = new ObjectId(req.usuario._id)
     }
 
     if (creador) {
@@ -124,8 +125,8 @@ export class ProductosService {
     return producto
   }
 
-  async findOneByCode(req: Request, codigo: number) {
-    const creador = new ObjectId(req['usuario']._id)
+  async findOneByCode(req: RequestConUsuario, codigo: number) {
+    const creador = new ObjectId(req.usuario._id)
     const options: FindManyOptions<Productos> = {
       where: {
         creador,
@@ -139,9 +140,9 @@ export class ProductosService {
     return producto
   }
 
-  async findOneByImage(req: Request, imagen: string) {
+  async findOneByImage(req: RequestConUsuario, imagen: string) {
 
-    const creador = new ObjectId(req['usuario']._id)
+    const creador = new ObjectId(req.usuario._id)
     const options: FindManyOptions<Productos> = {
       where: {
         creador,
@@ -155,7 +156,7 @@ export class ProductosService {
   }
 
 
-  async editarUnProducto(req: Request, id: string, updateProductoDto: UpdateProductoDto, cliente?: boolean) {
+  async editarUnProducto(req: RequestConUsuario, id: string, updateProductoDto: UpdateProductoDto, cliente?: boolean) {
     const { codigo, nombre, marca, modelo, barras, proveedor, notas, imagen } = updateProductoDto.producto
 
     const producto: Productos | boolean = await this.findOne(req, id)
@@ -165,8 +166,8 @@ export class ProductosService {
     }
 
     let creador: ObjectId;
-    if (req['usuario']) {
-      creador = new ObjectId(req['usuario']._id)
+    if (req.usuario) {
+      creador = new ObjectId(req.usuario._id)
     }
     const _id = new ObjectId(producto._id)
 
@@ -224,7 +225,7 @@ export class ProductosService {
     }
   }
 
-  async editarProductos(req: Request, precio: number) {
+  async editarProductos(req: RequestConUsuario, precio: number) {
     if (!precio) {
       return new BadRequestException("Precio no válido")
     }
@@ -249,7 +250,7 @@ export class ProductosService {
     }
   }
 
-  async calcularPrecios(req: Request, producto: CreateProductoDto, precio?: Number) {
+  async calcularPrecios(req: RequestConUsuario, producto: CreateProductoDto, precio?: Number) {
     let { precio_venta, valor_dolar_compra, precio_compra_peso } = producto;
 
     let porcentajeEfectivo: Porcentajes | boolean = await this.porcentajeService.findOneBy(req, "EFECTIVO")
@@ -293,13 +294,13 @@ export class ProductosService {
 
 
 
-  async productoCambiado(req: Request, id: string, producto: UpdateProductoDto) {
+  async productoCambiado(req: RequestConUsuario, id: string, producto: UpdateProductoDto) {
     this.editarUnProducto(req, id, producto)
   }
 
 
 
-  async eliminarProducto(req: Request, id: string) {
+  async eliminarProducto(req: RequestConUsuario, id: string) {
     const producto: Productos | boolean = await this.findOne(req, id)
     if (!producto) {
       throw new NotFoundException("Producto no encontrado")
@@ -328,8 +329,8 @@ export class ProductosService {
 
 
 
-  async eliminarTodos(req: Request) {
-    const creador = new ObjectId(req['usuario']._id)
+  async eliminarTodos(req: RequestConUsuario) {
+    const creador = new ObjectId(req.usuario._id)
     const options: FindManyOptions<Productos> = { where: { creador } }
 
     const productos = await this.productosRepository.find(options)

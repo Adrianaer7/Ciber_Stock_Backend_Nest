@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Proveedores } from './entities/proveedor.entity';
 import { FindManyOptions, Repository } from 'typeorm';
 import { SocketService } from 'src/web-socket/web-socket.service';
+import { RequestConUsuario } from 'src/helpers/interfaces';
 
 @Injectable()
 export class ProveedoresService {
@@ -15,11 +16,11 @@ export class ProveedoresService {
     private readonly socketService: SocketService
   ) { }
 
-  async agregarProveedor(req: Request, createProveedoreDto: CreateProveedorDto) {
+  async agregarProveedor(req: RequestConUsuario, createProveedoreDto: CreateProveedorDto) {
     const { nombre, empresa, telEmpresa, telPersonal, email } = createProveedoreDto
 
     const datos = (nombre + empresa + telPersonal + telEmpresa + email).replace(/\s\s+/g, ' ').replace(/\s+/g, '').toUpperCase()
-    const creador = new ObjectId(req['usuario']._id)
+    const creador = new ObjectId(req.usuario._id)
 
     let nuevoProveedor = this.proveedoresRepository.create({
       ...createProveedoreDto,
@@ -38,8 +39,8 @@ export class ProveedoresService {
 
 
 
-  async todosProveedores(req: Request) {
-    const creador = new ObjectId(req['usuario']._id)
+  async todosProveedores(req: RequestConUsuario) {
+    const creador = new ObjectId(req.usuario._id)
     const options: FindManyOptions<Proveedores> = { where: { creador } }
     const proveedores = await this.proveedoresRepository.find(options)
     return { proveedores }
@@ -47,7 +48,7 @@ export class ProveedoresService {
 
 
 
-  async elProveedor(req: Request, id: string) {
+  async elProveedor(req: RequestConUsuario, id: string) {
     const proveedor: Proveedores | boolean = await this.findOne(req, id)
     if (!proveedor) {
       throw new NotFoundException("El proveedor no existe")
@@ -57,11 +58,11 @@ export class ProveedoresService {
 
 
 
-  async findOne(req: Request, id: string) {
+  async findOne(req: RequestConUsuario, id: string) {
     if (!ObjectId.isValid(id)) return false
 
     const _id = new ObjectId(id)
-    const creador = new ObjectId(req['usuario']._id)
+    const creador = new ObjectId(req.usuario._id)
 
     const options: FindManyOptions<Proveedores> = {
       where: {
@@ -78,7 +79,7 @@ export class ProveedoresService {
 
 
 
-  async editarProveedor(req: Request, id: string, updateProveedoreDto: UpdateProveedorDto) {
+  async editarProveedor(req: RequestConUsuario, id: string, updateProveedoreDto: UpdateProveedorDto) {
     const proveedor: Proveedores | boolean = await this.findOne(req, id)
 
     if (!proveedor) {
@@ -87,7 +88,7 @@ export class ProveedoresService {
 
     const { nombre, empresa, telEmpresa, telPersonal, email } = updateProveedoreDto
 
-    const creador = new ObjectId(req['usuario']._id)
+    const creador = new ObjectId(req.usuario._id)
     const _id = new ObjectId(proveedor._id)
 
     Object.assign(proveedor, updateProveedoreDto)
@@ -104,7 +105,7 @@ export class ProveedoresService {
 
 
 
-  async eliminarProveedor(req: Request, id: string) {
+  async eliminarProveedor(req: RequestConUsuario, id: string) {
     const proveedor: Proveedores | boolean = await this.findOne(req, id)
     if (!proveedor) {
       throw new NotFoundException("El proveedor no existe")
@@ -117,8 +118,8 @@ export class ProveedoresService {
 
 
 
-  async eliminarTodos(req: Request) {
-    const creador = new ObjectId(req['usuario']._id)
+  async eliminarTodos(req: RequestConUsuario) {
+    const creador = new ObjectId(req.usuario._id)
     const options: FindManyOptions<Proveedores> = { where: { creador } }
 
     const proveedores = await this.proveedoresRepository.find(options)

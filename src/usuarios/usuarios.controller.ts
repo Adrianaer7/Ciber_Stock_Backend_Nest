@@ -4,8 +4,8 @@ import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { ChangePasswordDto } from './dto/cambiarPassword.dto';
 import { NuevaPasswordDto } from './dto/nuevaPasssord.dto';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
-import { Throttle } from '@nestjs/throttler';
 import { ThrottlerGuard } from '@nestjs/throttler';
+import { RequestConUsuario } from 'src/helpers/interfaces';
 
 @Controller('usuarios')
 export class UsuariosController {
@@ -55,7 +55,7 @@ export class UsuariosController {
 
   @UseGuards(AuthGuard)
   @Delete()
-  removeAll(@Request() req: Request) {
+  removeAll(@Request() req: RequestConUsuario) {
     return this.usuariosService.removeAll(req);
   }
 }

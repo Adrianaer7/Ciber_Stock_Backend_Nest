@@ -1,5 +1,4 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { CreateDolarDto } from './dto/create-dolar.dto';
 import { UpdateDolarDto } from './dto/update-dolar.dto';
 import { ObjectId } from 'mongodb';
 import { FindManyOptions, Repository } from 'typeorm';
@@ -7,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Dolares } from './entities/dolar.entity';
 import { consultarDolar } from 'src/usuarios/helpers/consultarDolar';
 import { ProductosService } from 'src/productos/productos.service';
+import { RequestConUsuario } from 'src/helpers/interfaces';
 
 
 @Injectable()
@@ -20,11 +20,11 @@ export class DolaresService {
   ) { }
 
 
-  async enviarDolar(req: Request, automatico?: boolean) {
+  async enviarDolar(req: RequestConUsuario, automatico?: boolean) {
     let usd: Dolares = await this.findOne(req)
     if (!usd || usd.automatico || automatico) {
       let valor = await consultarDolar()
-      valor.creador = new ObjectId(req['usuario']._id)
+      valor.creador = new ObjectId(req.usuario._id)
       if (usd) {
         Object.assign(usd, valor)
       } else {
@@ -42,8 +42,8 @@ export class DolaresService {
     return dolar
   }
 
-  async findOne(req: Request) {
-    const creador = new ObjectId(req['usuario']._id)
+  async findOne(req: RequestConUsuario) {
+    const creador = new ObjectId(req.usuario._id)
     const options: FindManyOptions<Dolares> = { where: { creador } }
 
     const dolar: Dolares = await this.dolaresRepository.findOne(options)
@@ -53,7 +53,7 @@ export class DolaresService {
 
 
 
-  async editarManualmente(req: Request, updateDolarDto: UpdateDolarDto) {
+  async editarManualmente(req: RequestConUsuario, updateDolarDto: UpdateDolarDto) {
     const dolar: Dolares = await this.findOne(req)
 
     if (updateDolarDto.dolarManual) {
@@ -71,8 +71,8 @@ export class DolaresService {
 
 
 
-  async eliminarDolar(req: Request) {
-    const creador = new ObjectId(req['usuario']._id)
+  async eliminarDolar(req: RequestConUsuario) {
+    const creador = new ObjectId(req.usuario._id)
     const options: FindManyOptions<Dolares> = { where: { creador } }
 
     const dolares = await this.dolaresRepository.find(options)
@@ -82,8 +82,8 @@ export class DolaresService {
 
 
 
-  async eliminarTodos(req: Request) {
-    const creador = new ObjectId(req['usuario']._id)
+  async eliminarTodos(req: RequestConUsuario) {
+    const creador = new ObjectId(req.usuario._id)
     const options: FindManyOptions<Dolares> = { where: { creador } }
 
     const dolares = await this.dolaresRepository.find(options)

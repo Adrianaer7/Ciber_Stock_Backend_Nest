@@ -7,6 +7,7 @@ import { Productos } from 'src/productos/entities/producto.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductosService } from 'src/productos/productos.service';
 import { SocketService } from 'src/web-socket/web-socket.service';
+import { RequestConUsuario } from 'src/helpers/interfaces';
 
 @Injectable()
 export class ComprasService {
@@ -18,8 +19,8 @@ export class ComprasService {
     private readonly socketService: SocketService
   ) { }
 
-  async crearCompra(req: Request, createCompraDto: CreateCompraDto) {
-    const creador = new ObjectId(req['usuario']._id)
+  async crearCompra(req: RequestConUsuario, createCompraDto: CreateCompraDto) {
+    const creador = new ObjectId(req.usuario._id)
     let arsAdolar: string
     let purchase: Compras
 
@@ -93,11 +94,11 @@ export class ComprasService {
 
   }
 
-  async findOne(req: Request, id: string) {
+  async findOne(req: RequestConUsuario, id: string) {
     if (!ObjectId.isValid(id)) return false
 
     const _id = new ObjectId(id)
-    const creador = new ObjectId(req['usuario']._id)
+    const creador = new ObjectId(req.usuario._id)
 
     const options: FindManyOptions<Compras> = {
       where: {
@@ -113,8 +114,8 @@ export class ComprasService {
   }
 
 
-  async traerCompras(req: Request) {
-    const creador = new ObjectId(req['usuario']._id)
+  async traerCompras(req: RequestConUsuario) {
+    const creador = new ObjectId(req.usuario._id)
     const options: FindManyOptions<Compras> = {
       where: {
         creador
@@ -128,8 +129,8 @@ export class ComprasService {
     return { todas }
   }
 
-  async eliminarTodas(req: Request) {
-    const creador = new ObjectId(req['usuario']._id)
+  async eliminarTodas(req: RequestConUsuario) {
+    const creador = new ObjectId(req.usuario._id)
     const options: FindManyOptions<Compras> = { where: { creador } }
 
     const productos = await this.comprasRepository.find(options)

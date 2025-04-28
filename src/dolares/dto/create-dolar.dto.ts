@@ -1,5 +1,4 @@
-import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, Min } from "class-validator"
-import { ObjectId } from "mongodb"
+import { IsBoolean, IsNotEmpty, IsNumber, Min } from "class-validator"
 
 export class CreateDolarDto {
 

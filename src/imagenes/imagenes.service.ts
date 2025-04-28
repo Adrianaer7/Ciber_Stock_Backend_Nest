@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { generarId } from 'src/usuarios/helpers/generar';
 import { ProductosService } from 'src/productos/productos.service';
+import { RequestConUsuario } from 'src/helpers/interfaces';
 
 @Injectable()
 export class ImagenesService {
@@ -12,7 +13,7 @@ export class ImagenesService {
   ) { }
 
 
-  async guardarImagen(req: Request, file: Express.Multer.File): Promise<void> {
+  async guardarImagen(req: RequestConUsuario, file: Express.Multer.File): Promise<void> {
     if (!file) {
       throw new BadRequestException('No se proporcionó ningún archivo.');
     }

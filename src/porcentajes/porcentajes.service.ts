@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Porcentajes } from './entities/porcentajes.entity';
 import { FindManyOptions, Repository } from 'typeorm';
 import { ObjectId } from 'mongodb';
-import { Productos } from 'src/productos/entities/producto.entity';
+import { RequestConUsuario } from 'src/helpers/interfaces';
 
 @Injectable()
 export class PorcentajesService {
@@ -13,8 +13,8 @@ export class PorcentajesService {
     @InjectRepository(Porcentajes) private readonly porcentajesRepository: Repository<Porcentajes>
   ) { }
 
-  agregarPorcentaje(req: Request, createPorcentajeDto: CreatePorcentajeDto) {
-    const creador = new ObjectId(req['usuario']._id)
+  agregarPorcentaje(req: RequestConUsuario, createPorcentajeDto: CreatePorcentajeDto) {
+    const creador = new ObjectId(req.usuario._id)
     const nuevoPorcentaje = this.porcentajesRepository.create({
       ...createPorcentajeDto,
       creador
@@ -25,8 +25,8 @@ export class PorcentajesService {
 
 
 
-  async todosPorcentajes(req: Request) {
-    const creador = new ObjectId(req['usuario']._id)
+  async todosPorcentajes(req: RequestConUsuario) {
+    const creador = new ObjectId(req.usuario._id)
     const options: FindManyOptions<Porcentajes> = { where: { creador } }
     const porcentajes = await this.porcentajesRepository.find(options)
     return { porcentajes }
@@ -34,7 +34,7 @@ export class PorcentajesService {
 
 
 
-  async elPorcentaje(req: Request, id: string) {
+  async elPorcentaje(req: RequestConUsuario, id: string) {
     const porcentaje: Porcentajes | boolean = await this.findOne(req, id)
     if (!porcentaje) {
       throw new NotFoundException("El porcentaje no existe")
@@ -43,11 +43,11 @@ export class PorcentajesService {
     return { porcentaje }
   }
 
-  async findOne(req: Request, id: string) {
+  async findOne(req: RequestConUsuario, id: string) {
     if (!ObjectId.isValid(id)) return false
 
     const _id = new ObjectId(id)
-    const creador = new ObjectId(req['usuario']._id)
+    const creador = new ObjectId(req.usuario._id)
 
     const options: FindManyOptions<Porcentajes> = {
       where: {
@@ -62,9 +62,9 @@ export class PorcentajesService {
     return porcentaje
   }
 
-  async findOneBy(req: Request, tipo: string) {
+  async findOneBy(req: RequestConUsuario, tipo: string) {
 
-    const creador = new ObjectId(req['usuario']._id)
+    const creador = new ObjectId(req.usuario._id)
 
     const options: FindManyOptions<Porcentajes> = {
       where: {
@@ -78,13 +78,13 @@ export class PorcentajesService {
     return porcentaje
   }
 
-  async editarPorcentaje(req: Request, updatePorcentajeDto: UpdatePorcentajeDto, id: string) {
+  async editarPorcentaje(req: RequestConUsuario, updatePorcentajeDto: UpdatePorcentajeDto, id: string) {
     const porcentaje: Porcentajes | boolean = await this.findOne(req, id)
     if (!porcentaje) {
       throw new NotFoundException("El porcentaje no existe")
     }
 
-    const creador = new ObjectId(req['usuario']._id)
+    const creador = new ObjectId(req.usuario._id)
     const _id = new ObjectId(porcentaje._id)
 
     Object.assign(porcentaje, updatePorcentajeDto)
@@ -98,7 +98,7 @@ export class PorcentajesService {
 
 
 
-  async eliminarPorcentaje(req: Request, id: string) {
+  async eliminarPorcentaje(req: RequestConUsuario, id: string) {
     const porcentaje: Porcentajes | boolean = await this.findOne(req, id)
     if (!porcentaje) {
       throw new NotFoundException("El porcentaje no existe")
@@ -108,8 +108,8 @@ export class PorcentajesService {
     return { msg: "Porcentaje eliminado" }
   }
 
-  async eliminarTodos(req: Request) {
-    const creador = new ObjectId(req['usuario']._id)
+  async eliminarTodos(req: RequestConUsuario) {
+    const creador = new ObjectId(req.usuario._id)
     const options: FindManyOptions<Porcentajes> = { where: { creador } }
 
     const porcentaje = await this.porcentajesRepository.find(options)

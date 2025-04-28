@@ -28,3 +28,14 @@ export interface DolarAmbito {
     "class-variacion": string;
     valor_cierre_ant: string;
 }
+
+//por la version 6 de la libreria de mongodb tengo que pasar si o si un string en el new ObjectId(). Antes no era necesario especificar el tipo de dato que le pasabas
+export interface Usuario {
+    _id: string;
+    email: string;
+    token: string;
+}
+
+export interface RequestConUsuario extends Request {
+    usuario: Usuario;
+}

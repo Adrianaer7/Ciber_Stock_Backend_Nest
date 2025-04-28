@@ -34,7 +34,7 @@ export class AuthGuard implements CanActivate {
 
     const { password, token, confirmado, createAt, updateAt, ...user } = usuario
 
-    request['usuario'] = user;
+    request['usuario'] = user;  //guardo el usuario en la request para usarlo en el controlador
 
     return true;
   }

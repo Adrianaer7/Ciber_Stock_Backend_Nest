@@ -56,12 +56,6 @@ export class AuthService {
 
 
 
-  usuarioAutenticado(req: Request) {
-    return { usuario: req['usuario'] }
-  }
-
-
-
   generarJWT(payload: JwtPayload) {
     const token = this.jwtService.sign(payload);
     return token;

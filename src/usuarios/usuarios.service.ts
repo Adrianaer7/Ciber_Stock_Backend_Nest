@@ -8,6 +8,8 @@ import { ChangePasswordDto } from './dto/cambiarPassword.dto';
 import { NuevaPasswordDto } from './dto/nuevaPasssord.dto';
 import { generarId } from './helpers/generar';
 import { MailService } from 'src/mail/mail.service';
+import { RequestConUsuario } from 'src/helpers/interfaces';
+import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class UsuariosService {
@@ -129,10 +131,10 @@ export class UsuariosService {
 
 
 
-  async removeAll(req: Request) {
+  async removeAll(req: RequestConUsuario) {
     //busco usuario
-    const _id = req['usuario']._id
-    const usuario = await this.userRepository.findOneBy({ _id })
+    const _id = new ObjectId(req.usuario._id)
+    const usuario = await this.userRepository.findOneBy( {_id} )
 
     //valido
     if (!usuario) throw new NotFoundException("Token no válido")

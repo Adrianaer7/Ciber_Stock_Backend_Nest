@@ -8,6 +8,7 @@ import { FindManyOptions, Repository } from 'typeorm';
 import { Productos } from 'src/productos/entities/producto.entity';
 import { ProductosService } from 'src/productos/productos.service';
 import { SocketService } from 'src/web-socket/web-socket.service';
+import { RequestConUsuario } from 'src/helpers/interfaces';
 
 @Injectable()
 export class RubrosService {
@@ -21,8 +22,8 @@ export class RubrosService {
     private readonly socketService: SocketService,
   ) { }
 
-  async agregarRubro(req: Request, createRubroDto: CreateRubroDto) {
-    const creador = new ObjectId(req['usuario']._id)
+  async agregarRubro(req: RequestConUsuario, createRubroDto: CreateRubroDto) {
+    const creador = new ObjectId(req.usuario._id)
 
     const nuevoRubro = this.rubrosRepository.create({
       ...createRubroDto,
@@ -45,8 +46,8 @@ export class RubrosService {
 
 
 
-  async todosRubros(req: Request) {
-    const creador = new ObjectId(req['usuario']._id)
+  async todosRubros(req: RequestConUsuario) {
+    const creador = new ObjectId(req.usuario._id)
     const options: FindManyOptions<Rubros> = { where: { creador } }
     const rubros = await this.rubrosRepository.find(options)
     return { rubros }
@@ -54,7 +55,7 @@ export class RubrosService {
 
 
 
-  async elRubro(req: Request, id: string) {
+  async elRubro(req: RequestConUsuario, id: string) {
     const rubro: Rubros | boolean = await this.findOne(req, id)
     if (!rubro) {
       throw new NotFoundException("El rubro no existe")
@@ -65,11 +66,11 @@ export class RubrosService {
 
 
 
-  async findOne(req: Request, id: string) {
+  async findOne(req: RequestConUsuario, id: string) {
     if (!ObjectId.isValid(id)) return false
 
     const _id = new ObjectId(id)
-    const creador = new ObjectId(req['usuario']._id)
+    const creador = new ObjectId(req.usuario._id)
 
     const options: FindManyOptions<Rubros> = {
       where: {
@@ -86,13 +87,13 @@ export class RubrosService {
 
 
 
-  async editarRubro(req: Request, id: string, updateRubroDto: UpdateRubroDto) {
+  async editarRubro(req: RequestConUsuario, id: string, updateRubroDto: UpdateRubroDto) {
     const rubro: Rubros | boolean = await this.findOne(req, id)
     if (!rubro) {
       throw new NotFoundException("El rubro no existe")
     }
 
-    const creador = new ObjectId(req['usuario']._id)
+    const creador = new ObjectId(req.usuario._id)
     const _id = new ObjectId(rubro._id)
 
     Object.assign(rubro, updateRubroDto)
@@ -128,7 +129,7 @@ export class RubrosService {
 
 
 
-  async eliminarRubro(req: Request, id: string) {
+  async eliminarRubro(req: RequestConUsuario, id: string) {
     const rubro: Rubros | boolean = await this.findOne(req, id)
     if (!rubro) {
       throw new NotFoundException("El rubro no existe")
@@ -141,8 +142,8 @@ export class RubrosService {
 
 
 
-  async eliminarTodos(req: Request) {
-    const creador = new ObjectId(req['usuario']._id)
+  async eliminarTodos(req: RequestConUsuario) {
+    const creador = new ObjectId(req.usuario._id)
     const options: FindManyOptions<Rubros> = { where: { creador } }
 
     const rubros = await this.rubrosRepository.find(options)
