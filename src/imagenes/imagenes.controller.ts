@@ -6,7 +6,7 @@ import * as multer from 'multer';
 
 @Controller('imagenes')
 export class ImagenesController {
-  constructor(private readonly imagenesService: ImagenesService) {}
+  constructor(private readonly imagenesService: ImagenesService) { }
 
   @UseGuards(AuthGuard)
   @Post()
@@ -17,10 +17,10 @@ export class ImagenesController {
     })
   )
   guardarImagen(@Request() req: Request, @UploadedFile() file: Express.Multer.File) {
-    if(!file) {
+    if (!file) {
       throw new BadRequestException('La Imagen es Obligatoria')
     }
     return this.imagenesService.guardarImagen(req, file);
-  } 
+  }
 
 }

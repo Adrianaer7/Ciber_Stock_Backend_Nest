@@ -5,7 +5,7 @@ import { AuthGuard } from 'src/auth/guards/auth.guard';
 
 @Controller('dolares')
 export class DolaresController {
-  constructor(private readonly dolaresService: DolaresService) {}
+  constructor(private readonly dolaresService: DolaresService) { }
 
   @UseGuards(AuthGuard)
   @Get()

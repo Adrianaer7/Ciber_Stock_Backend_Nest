@@ -17,4 +17,4 @@ import { WebSocketModule } from 'src/web-socket/web-socket.module';
   controllers: [FaltantesController],
   providers: [FaltantesService],
 })
-export class FaltantesModule {}
+export class FaltantesModule { }

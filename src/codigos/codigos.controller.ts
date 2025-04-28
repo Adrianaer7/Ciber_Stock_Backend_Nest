@@ -4,7 +4,7 @@ import { AuthGuard } from 'src/auth/guards/auth.guard';
 
 @Controller('codigos')
 export class CodigosController {
-  constructor(private readonly codigosService: CodigosService) {}
+  constructor(private readonly codigosService: CodigosService) { }
 
   @UseGuards(AuthGuard)
   @Get()

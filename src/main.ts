@@ -29,7 +29,7 @@ async function bootstrap() {
     methods: 'GET,PUT,POST,DELETE',
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
-});
+  });
 
   await app.listen(environments.PORT);
   console.log(`Servidor conectado ${environments.PORT}`)

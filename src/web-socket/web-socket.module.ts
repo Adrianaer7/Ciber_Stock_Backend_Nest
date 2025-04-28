@@ -14,4 +14,4 @@ import { MapProvider } from './map.provider';
   providers: [SocketGateways, SocketService, MapProvider],
   exports: [SocketService]
 })
-export class WebSocketModule {}
+export class WebSocketModule { }

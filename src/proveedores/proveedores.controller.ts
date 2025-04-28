@@ -6,7 +6,7 @@ import { AuthGuard } from 'src/auth/guards/auth.guard';
 
 @Controller('proveedores')
 export class ProveedoresController {
-  constructor(private readonly proveedoresService: ProveedoresService) {}
+  constructor(private readonly proveedoresService: ProveedoresService) { }
 
   @UseGuards(AuthGuard)
   @Post()

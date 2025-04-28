@@ -9,7 +9,7 @@ import { ThrottlerGuard } from '@nestjs/throttler';
 
 @Controller('usuarios')
 export class UsuariosController {
-  constructor(private readonly usuariosService: UsuariosService) {}
+  constructor(private readonly usuariosService: UsuariosService) { }
 
   @UseGuards(ThrottlerGuard)
   @Post()
@@ -33,23 +33,23 @@ export class UsuariosController {
   }
 
   @Post('/olvide-password')
-  olvidePassword( @Body() changePasswordDto: ChangePasswordDto) {
+  olvidePassword(@Body() changePasswordDto: ChangePasswordDto) {
     return this.usuariosService.olvidePassword(changePasswordDto);
   }
 
   @UseGuards(ThrottlerGuard)
   @Get('/olvide-password/:token')
   comprobarToken(@Param('token') token: string) {
-    if (!token) { 
+    if (!token) {
       throw new BadRequestException('El token no es válido.');
     }
     return this.usuariosService.comprobarToken(token);
   }
-  
+
   @UseGuards(ThrottlerGuard)
   @HttpCode(200)
   @Post('/olvide-password/:token')
-  nuevoPassword( @Param('token') token: string, @Body() nuevaPasswordDto: NuevaPasswordDto) {
+  nuevoPassword(@Param('token') token: string, @Body() nuevaPasswordDto: NuevaPasswordDto) {
     return this.usuariosService.nuevoPassword(token, nuevaPasswordDto);
   }
 
@@ -57,5 +57,5 @@ export class UsuariosController {
   @Delete()
   removeAll(@Request() req: Request) {
     return this.usuariosService.removeAll(req);
-  } 
+  }
 }

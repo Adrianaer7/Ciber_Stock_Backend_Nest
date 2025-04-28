@@ -29,9 +29,9 @@ export class VentasService {
     })
 
     try {
-      const venta =  await this.ventasRepository.save(nuevaVenta)
+      const venta = await this.ventasRepository.save(nuevaVenta)
       await this.socketService.emitirProductos()
-      return {venta}
+      return { venta }
     } catch (error) {
       if (error.console.log('error') === 11000) {
         throw new BadRequestException(`La venta ya existe`)
@@ -44,16 +44,16 @@ export class VentasService {
 
   async todasVentas(req: Request) {
     const creador = new ObjectId(req['usuario']._id)
-    const options: FindManyOptions<Ventas> = { 
-      where: { 
-        creador 
+    const options: FindManyOptions<Ventas> = {
+      where: {
+        creador
       },
       order: {
         creado: "DESC"
       }
     }
     const ventas = await this.ventasRepository.find(options)
-    return {ventas}
+    return { ventas }
   }
 
 
@@ -112,7 +112,7 @@ export class VentasService {
 
     const producto: Productos | boolean = await this.productosService.findOne(req, updateVentaDto.idProducto)
     if (!producto) {
-      throw new BadRequestException("No se pueden devolver las unidades porque el producto ya no existe") 
+      throw new BadRequestException("No se pueden devolver las unidades porque el producto ya no existe")
     }
 
     const creador = new ObjectId(req['usuario']._id)
@@ -130,9 +130,9 @@ export class VentasService {
 
     //Actualizo las unidades vendidas del producto
     updateVentaDto.unidades = venta.unidades - updateVentaDto.cantidad
-    const laVenta =  await this.ventasRepository.save(updateVentaDto)
+    const laVenta = await this.ventasRepository.save(updateVentaDto)
     await this.socketService.emitirProductos()
-    return {venta: laVenta}
+    return { venta: laVenta }
   }
 
 
@@ -145,12 +145,12 @@ export class VentasService {
 
     const producto: Productos | boolean = await this.productosService.findOne(req, venta.idProducto.toString())
     if (!producto) {
-    throw new BadRequestException("No se pueden devolver las unidades porque el producto ya no existe")
+      throw new BadRequestException("No se pueden devolver las unidades porque el producto ya no existe")
     }
 
     //Actualizo las unidades del producto
     producto.disponibles = producto.disponibles + venta.unidades
-    await this.productosService.productoCambiado(req, venta.idProducto.toString(), {producto})
+    await this.productosService.productoCambiado(req, venta.idProducto.toString(), { producto })
 
     //Elimino la venta
     await this.ventasRepository.remove(venta)

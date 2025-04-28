@@ -4,14 +4,14 @@ import { Type } from 'class-transformer';
 
 
 export class CreateCompraDto {
-    @IsString({message: "Cantidad no válida"})
-    cantidad: string; 
+    @IsString({ message: "Cantidad no válida" })
+    cantidad: string;
 
-    @IsBoolean({message: "Origen no válido"}) 
+    @IsBoolean({ message: "Origen no válido" })
     desdeForm: boolean;
-    
-    @ValidateNested() 
-    @Type(() => CreateProductoDto) 
+
+    @ValidateNested()
+    @Type(() => CreateProductoDto)
     producto: CreateProductoDto
 }
 

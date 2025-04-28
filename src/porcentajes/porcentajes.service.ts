@@ -29,7 +29,7 @@ export class PorcentajesService {
     const creador = new ObjectId(req['usuario']._id)
     const options: FindManyOptions<Porcentajes> = { where: { creador } }
     const porcentajes = await this.porcentajesRepository.find(options)
-    return {porcentajes}
+    return { porcentajes }
   }
 
 
@@ -40,7 +40,7 @@ export class PorcentajesService {
       throw new NotFoundException("El porcentaje no existe")
     }
 
-    return {porcentaje}
+    return { porcentaje }
   }
 
   async findOne(req: Request, id: string) {
@@ -92,8 +92,8 @@ export class PorcentajesService {
     updatePorcentajeDto.creador = creador
 
 
-    const percentaje =  await this.porcentajesRepository.save(updatePorcentajeDto)
-    return {porcentaje: percentaje}
+    const percentaje = await this.porcentajesRepository.save(updatePorcentajeDto)
+    return { porcentaje: percentaje }
   }
 
 

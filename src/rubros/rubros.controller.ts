@@ -6,7 +6,7 @@ import { AuthGuard } from 'src/auth/guards/auth.guard';
 
 @Controller('rubros')
 export class RubrosController {
-  constructor(private readonly rubrosService: RubrosService) {}
+  constructor(private readonly rubrosService: RubrosService) { }
 
   @UseGuards(AuthGuard)
   @Post()

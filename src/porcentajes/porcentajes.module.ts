@@ -14,4 +14,4 @@ import { AuthModule } from 'src/auth/auth.module';
   providers: [PorcentajesService],
   exports: [PorcentajesService]
 })
-export class PorcentajesModule {}
+export class PorcentajesModule { }

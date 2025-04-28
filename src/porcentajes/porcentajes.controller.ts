@@ -6,7 +6,7 @@ import { AuthGuard } from 'src/auth/guards/auth.guard';
 
 @Controller('porcentajes')
 export class PorcentajesController {
-  constructor(private readonly porcentajesService: PorcentajesService) {}
+  constructor(private readonly porcentajesService: PorcentajesService) { }
 
   @UseGuards(AuthGuard)
   @Post()

@@ -19,11 +19,11 @@ export class RubrosService {
     private readonly productosRepository: Repository<Productos>,
     private readonly productosService: ProductosService,
     private readonly socketService: SocketService,
-  ) {}
+  ) { }
 
   async agregarRubro(req: Request, createRubroDto: CreateRubroDto) {
     const creador = new ObjectId(req['usuario']._id)
-      
+
     const nuevoRubro = this.rubrosRepository.create({
       ...createRubroDto,
       rentabilidad: Number(createRubroDto.rentabilidad),
@@ -31,11 +31,11 @@ export class RubrosService {
     })
 
     try {
-      const rubro =  await this.rubrosRepository.save(nuevoRubro)
+      const rubro = await this.rubrosRepository.save(nuevoRubro)
       await this.socketService.emitirRubros()
-      return {rubro}
+      return { rubro }
     } catch (error) {
-      if( error.code === 11000 ) {
+      if (error.code === 11000) {
         throw new BadRequestException(`El rubro ya existe`)
       }
       throw new InternalServerErrorException(error);
@@ -47,48 +47,48 @@ export class RubrosService {
 
   async todosRubros(req: Request) {
     const creador = new ObjectId(req['usuario']._id)
-    const options : FindManyOptions<Rubros> = {where: {creador}}
+    const options: FindManyOptions<Rubros> = { where: { creador } }
     const rubros = await this.rubrosRepository.find(options)
-    return {rubros}
+    return { rubros }
   }
 
 
 
   async elRubro(req: Request, id: string) {
     const rubro: Rubros | boolean = await this.findOne(req, id)
-    if(!rubro) {
+    if (!rubro) {
       throw new NotFoundException("El rubro no existe")
     }
 
-    return {rubro}
+    return { rubro }
   }
 
 
 
   async findOne(req: Request, id: string) {
-    if(!ObjectId.isValid(id)) return false
+    if (!ObjectId.isValid(id)) return false
 
-    const _id = new ObjectId(id)      
+    const _id = new ObjectId(id)
     const creador = new ObjectId(req['usuario']._id)
-    
-    const options : FindManyOptions<Rubros> = {
+
+    const options: FindManyOptions<Rubros> = {
       where: {
         creador,
         _id
       }
     }
-    
+
     const proveedor: Rubros = await this.rubrosRepository.findOne(options)
-    if(!proveedor) return false
+    if (!proveedor) return false
 
     return proveedor
   }
 
 
 
-  async editarRubro(req: Request, id: string,  updateRubroDto: UpdateRubroDto) {
+  async editarRubro(req: Request, id: string, updateRubroDto: UpdateRubroDto) {
     const rubro: Rubros | boolean = await this.findOne(req, id)
-    if(!rubro) {
+    if (!rubro) {
       throw new NotFoundException("El rubro no existe")
     }
 
@@ -102,57 +102,57 @@ export class RubrosService {
     updateRubroDto.creador = creador
 
     //Busco productos que tengan el nombre del rubro y los actualizo
-    const options : FindManyOptions<Productos> = { where: {creador, rubro: updateRubroDto.nombre} }
+    const options: FindManyOptions<Productos> = { where: { creador, rubro: updateRubroDto.nombre } }
     const productos: Productos[] = await this.productosRepository.find(options)
 
-    if(productos.length) {
-      for(const producto of productos) {
-        const {precio_venta, precio_compra_dolar, precio_compra_peso, valor_dolar_compra} = producto
-  
+    if (productos.length) {
+      for (const producto of productos) {
+        const { precio_venta, precio_compra_dolar, precio_compra_peso, valor_dolar_compra } = producto
+
         producto.rubroValor = updateRubroDto.rentabilidad
-  
-        if(precio_compra_dolar && precio_venta > 0) {
+
+        if (precio_compra_dolar && precio_venta > 0) {
           producto.precio_venta = (precio_compra_dolar * valor_dolar_compra) * (1 + updateRubroDto.rentabilidad / 100);
         }
-        if(precio_compra_peso && precio_venta > 0) {
+        if (precio_compra_peso && precio_venta > 0) {
           producto.precio_venta = (precio_compra_peso * valor_dolar_compra) * (1 + updateRubroDto.rentabilidad / 100);
         }
-        this.productosService.productoCambiado(req, id, {producto})
+        this.productosService.productoCambiado(req, id, { producto })
       }
     }
 
-    const category =  await this.rubrosRepository.save(updateRubroDto)
+    const category = await this.rubrosRepository.save(updateRubroDto)
     await this.socketService.emitirRubros()
-    return {rubro: category}
+    return { rubro: category }
   }
 
 
 
   async eliminarRubro(req: Request, id: string) {
     const rubro: Rubros | boolean = await this.findOne(req, id)
-    if(!rubro) {
+    if (!rubro) {
       throw new NotFoundException("El rubro no existe")
     }
 
     await this.rubrosRepository.remove(rubro)
     await this.socketService.emitirRubros()
-    return {msg: "Rubro eliminado"} 
+    return { msg: "Rubro eliminado" }
   }
 
 
 
   async eliminarTodos(req: Request) {
     const creador = new ObjectId(req['usuario']._id)
-    const options : FindManyOptions<Rubros> = { where: {creador} }
+    const options: FindManyOptions<Rubros> = { where: { creador } }
 
     const rubros = await this.rubrosRepository.find(options)
-    if(!rubros.length) {
-      return {msg: "No se encontraron rubros a eliminar"}
+    if (!rubros.length) {
+      return { msg: "No se encontraron rubros a eliminar" }
     }
 
     await this.rubrosRepository.remove(rubros)
 
-    return {msg:"Todos los rubros se eliminaron"}  
+    return { msg: "Todos los rubros se eliminaron" }
   }
-  
+
 }

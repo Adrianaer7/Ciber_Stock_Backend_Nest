@@ -1,5 +1,5 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { CreateDolarDto } from './dto/create-dolare.dto';
+import { CreateDolarDto } from './dto/create-dolar.dto';
 import { UpdateDolarDto } from './dto/update-dolar.dto';
 import { ObjectId } from 'mongodb';
 import { FindManyOptions, Repository } from 'typeorm';
@@ -25,7 +25,7 @@ export class DolaresService {
     if (!usd || usd.automatico || automatico) {
       let valor = await consultarDolar()
       valor.creador = new ObjectId(req['usuario']._id)
-      if(usd) {
+      if (usd) {
         Object.assign(usd, valor)
       } else {
         usd = valor
@@ -69,7 +69,7 @@ export class DolaresService {
     }
   }
 
-  
+
 
   async eliminarDolar(req: Request) {
     const creador = new ObjectId(req['usuario']._id)

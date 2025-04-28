@@ -16,4 +16,4 @@ import { ProductosModule } from 'src/productos/productos.module';
   providers: [DolaresService],
   exports: [DolaresService]
 })
-export class DolaresModule {}
+export class DolaresModule { }

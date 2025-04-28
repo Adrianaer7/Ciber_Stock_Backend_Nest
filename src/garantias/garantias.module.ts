@@ -15,4 +15,4 @@ import { ProductosModule } from 'src/productos/productos.module';
   controllers: [GarantiasController],
   providers: [GarantiasService],
 })
-export class GarantiasModule {}
+export class GarantiasModule { }

@@ -18,4 +18,4 @@ import { WebSocketModule } from 'src/web-socket/web-socket.module';
   controllers: [ComprasController],
   providers: [ComprasService],
 })
-export class ComprasModule {}
+export class ComprasModule { }

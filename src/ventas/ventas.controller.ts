@@ -6,11 +6,11 @@ import { AuthGuard } from 'src/auth/guards/auth.guard';
 
 @Controller('ventas')
 export class VentasController {
-  constructor(private readonly ventasService: VentasService) {}
+  constructor(private readonly ventasService: VentasService) { }
 
   @UseGuards(AuthGuard)
   @Post()
-  agregarVenta(@Request() req: Request , @Body() createVentaDto: CreateVentaDto) {
+  agregarVenta(@Request() req: Request, @Body() createVentaDto: CreateVentaDto) {
     return this.ventasService.agregarVenta(req, createVentaDto);
   }
 

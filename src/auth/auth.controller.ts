@@ -6,7 +6,7 @@ import { ThrottlerGuard } from '@nestjs/throttler';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @UseGuards(ThrottlerGuard)
   @Post()
@@ -17,7 +17,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Get()
-  usuarioAutenticado( @Request() req: Request) {
+  usuarioAutenticado(@Request() req: Request) {
     return this.authService.usuarioAutenticado(req)
   }
 }

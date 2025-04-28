@@ -7,10 +7,10 @@ import { environments } from 'src/environments/environment';
 export class MailService {
     constructor(
         private mailerService: MailerService
-    ) {}
-    
+    ) { }
+
     async emailRegistro(datos) {
-        const {nombre, email, token}  = datos
+        const { nombre, email, token } = datos
 
         this.mailerService.sendMail({
             from: '"Stock - Ciber infotel" <adrianaerrc7@gmail.com>',
@@ -35,7 +35,7 @@ export class MailService {
 
 
     async emailOlvidePassword(datos) {
-        const {email, nombre, token} = datos
+        const { email, nombre, token } = datos
         this.mailerService.sendMail({
             from: '"Stock - Ciber infotel" <correo@correo.com>',
             to: email,

@@ -19,4 +19,4 @@ import { WebSocketModule } from 'src/web-socket/web-socket.module';
   providers: [VentasService],
   exports: [VentasService]
 })
-export class VentasModule {}
+export class VentasModule { }

@@ -10,9 +10,9 @@ export class Proveedores {
     @Column('varchar')
     nombre: string
 
-    @Column({type: 'varchar', nullable: false})
+    @Column({ type: 'varchar', nullable: false })
     empresa: string
-    
+
     @Column('varchar')
     telPersonal: string
 

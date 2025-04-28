@@ -5,9 +5,9 @@ import { AuthGuard } from 'src/auth/guards/auth.guard';
 
 @Controller('compras')
 export class ComprasController {
-  constructor(private readonly comprasService: ComprasService) {}
+  constructor(private readonly comprasService: ComprasService) { }
 
-  @UseGuards(AuthGuard) 
+  @UseGuards(AuthGuard)
   @Post()
   crearCompra(@Request() req: Request, @Body() createCompraDto: CreateCompraDto) {
     return this.comprasService.crearCompra(req, createCompraDto);

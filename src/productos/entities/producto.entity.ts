@@ -7,7 +7,7 @@ export class Productos {
     @ObjectIdColumn()
     _id: ObjectId
 
-    @Column({type: "varchar", nullable: false})
+    @Column({ type: "varchar", nullable: false })
     nombre: string
 
     @Column('varchar')
@@ -16,7 +16,7 @@ export class Productos {
     @Column('varchar')
     modelo: string
 
-    @Column({type: 'int', nullable: false, unique: true})
+    @Column({ type: 'int', nullable: false, unique: true })
     codigo: number
 
     @Column('varchar')

@@ -4,14 +4,14 @@ import { AuthGuard } from 'src/auth/guards/auth.guard';
 
 @Controller('faltantes')
 export class FaltantesController {
-  constructor(private readonly faltantesService: FaltantesService) {}
+  constructor(private readonly faltantesService: FaltantesService) { }
 
   @UseGuards(AuthGuard)
   @Get()
   todosFaltantes(@Request() req: Request) {
     return this.faltantesService.todosFaltantes(req);
   }
-  
+
   @UseGuards(AuthGuard)
   @Put(':id')
   crearFaltante(@Request() req: Request, @Param() id: string) {

@@ -14,11 +14,11 @@ import { environments } from 'src/environments/environment';
     JwtModule.register({
       global: true,
       secret: environments.SECRETA,
-      signOptions: {expiresIn: '6h'},
+      signOptions: { expiresIn: '6h' },
     })
   ],
   controllers: [AuthController],
   providers: [AuthService],
   exports: [AuthService]
 })
-export class AuthModule {}
+export class AuthModule { }

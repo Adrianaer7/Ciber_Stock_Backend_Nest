@@ -77,7 +77,7 @@ export class GarantiasService {
   async traerGarantias(req: Request) {
     const creador = new ObjectId(req['usuario']._id)
     const options: FindManyOptions<Garantias> = { where: { creador } }
-    const garantias =  await this.garantiasRepository.find(options)
-    return {garantias}
+    const garantias = await this.garantiasRepository.find(options)
+    return { garantias }
   }
 }

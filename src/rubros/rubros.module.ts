@@ -18,4 +18,4 @@ import { WebSocketModule } from 'src/web-socket/web-socket.module';
   controllers: [RubrosController],
   providers: [RubrosService],
 })
-export class RubrosModule {}
+export class RubrosModule { }

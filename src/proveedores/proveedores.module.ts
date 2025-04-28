@@ -15,4 +15,4 @@ import { WebSocketModule } from 'src/web-socket/web-socket.module';
   controllers: [ProveedoresController],
   providers: [ProveedoresService],
 })
-export class ProveedoresModule {}
+export class ProveedoresModule { }

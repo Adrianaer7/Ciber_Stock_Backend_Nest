@@ -29,13 +29,13 @@ export class SocketGateways implements OnGatewayConnection, OnGatewayDisconnect 
     const token = client.handshake.headers.authentication
     try {
       const usuario = await this.verifyToken(token);
-      if(usuario) {
+      if (usuario) {
         if (this.activeSessions.has(usuario._id.toString())) {
           console.log(`El usuario ${usuario.nombre} va a ser desconectado por que ya tiene sesión activa`);
           client.disconnect(); // Ejecuta el handleDisconnect
           return;
         }
-        this.activeSessions.set(usuario._id.toString(), {clientId: client.id, nombre: usuario.nombre});
+        this.activeSessions.set(usuario._id.toString(), { clientId: client.id, nombre: usuario.nombre });
         console.log(`Cliente conectado: ${usuario.nombre}`);
         //this.server.emit('clients-updated', this.getConnectedClients());
       } else {
@@ -51,7 +51,7 @@ export class SocketGateways implements OnGatewayConnection, OnGatewayDisconnect 
   async handleDisconnect(client: Socket) {
     const token = client.handshake.headers.authentication;
     const usuario = await this.verifyToken(token);
-    if(usuario) {
+    if (usuario) {
       this.activeSessions.delete(usuario._id.toString());
       console.log(`Cliente desconectado: ${usuario.nombre}`);
     }
@@ -60,7 +60,7 @@ export class SocketGateways implements OnGatewayConnection, OnGatewayDisconnect 
   afterInit() {
     this.socketService.setServer(this.server); // Asignamos el server al servicio
   }
-  
+
   /* @SubscribeMessage('message-from-client')
   handleMessage(client: Socket, payload: { id: string, message: string }) {
     console.log(`Mensaje recibido de ${payload.id}: ${payload.message}`);

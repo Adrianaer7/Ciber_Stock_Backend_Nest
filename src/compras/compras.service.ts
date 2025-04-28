@@ -23,68 +23,68 @@ export class ComprasService {
     let arsAdolar: string
     let purchase: Compras
 
-    const {nombre, marca, modelo, codigo, precio_compra_dolar, precio_compra_peso, valor_dolar_compra, proveedor, garantia, factura, barras, fecha_compra, notas} = createCompraDto.producto
+    const { nombre, marca, modelo, codigo, precio_compra_dolar, precio_compra_peso, valor_dolar_compra, proveedor, garantia, factura, barras, fecha_compra, notas } = createCompraDto.producto
 
 
     const producto: Productos | boolean = await this.productosService.findOneByCode(req, codigo)
-    if(!producto) {
+    if (!producto) {
       throw new NotFoundException("Producto no encontrado")
     }
 
     const compra: Compras | boolean = await this.findOne(req, producto._id.toString())
 
-    if(precio_compra_peso > 0) {
-      arsAdolar = (precio_compra_peso / valor_dolar_compra ).toFixed(2)
+    if (precio_compra_peso > 0) {
+      arsAdolar = (precio_compra_peso / valor_dolar_compra).toFixed(2)
     }
 
-    if(!compra && createCompraDto.cantidad) { //si a ese producto nunca se le hizo una compra y traigo una cantidad, agrego el producto entero
+    if (!compra && createCompraDto.cantidad) { //si a ese producto nunca se le hizo una compra y traigo una cantidad, agrego el producto entero
       //creo el objeto a agregar con lo que me llega del front
-      const laCompra = { 
+      const laCompra = {
         idProducto: producto._id,
-        nombre, 
-        marca, 
-        modelo, 
+        nombre,
+        marca,
+        modelo,
         codigo,
         historial: [],
-        descripcion: (nombre + marca + modelo  + barras + factura + notas).replace(/\s\s+/g, ' ').replace(/\s+/g, ''),
+        descripcion: (nombre + marca + modelo + barras + factura + notas).replace(/\s\s+/g, ' ').replace(/\s+/g, ''),
         creador,
         creado: new Date()
       }
       laCompra.historial.push({
-        cantidad: createCompraDto.cantidad, 
-        fecha_compra, precio_compra_dolar, 
-        arsAdolar, 
-        valor_dolar_compra, 
-        proveedor, 
-        barras, 
-        factura, 
+        cantidad: createCompraDto.cantidad,
+        fecha_compra, precio_compra_dolar,
+        arsAdolar,
+        valor_dolar_compra,
+        proveedor,
+        barras,
+        factura,
         garantia
       })
 
-      purchase =  await this.comprasRepository.save(laCompra)
-    } 
+      purchase = await this.comprasRepository.save(laCompra)
+    }
 
-    if (compra && createCompraDto.cantidad ) {    //si existe el producto en el listado de compras y la cantidad es mayora a 0, edito el producto entero
+    if (compra && createCompraDto.cantidad) {    //si existe el producto en el listado de compras y la cantidad es mayora a 0, edito el producto entero
       const compraPasada: Compras = compra //guardo el primer y unico objeto coincidente
-      const datos = {cantidad: createCompraDto.cantidad, fecha_compra, precio_compra_dolar, arsAdolar, valor_dolar_compra, proveedor, barras, factura, garantia}
+      const datos = { cantidad: createCompraDto.cantidad, fecha_compra, precio_compra_dolar, arsAdolar, valor_dolar_compra, proveedor, barras, factura, garantia }
       compraPasada.nombre = nombre
       compraPasada.marca = marca
       compraPasada.modelo = modelo
       compraPasada.historial.push(datos)
-      compraPasada.descripcion = (nombre + marca + modelo  + barras + factura + notas).replace(/\s\s+/g, ' ').replace(/\s+/g, '')
-      compraPasada.creado =  new Date()
+      compraPasada.descripcion = (nombre + marca + modelo + barras + factura + notas).replace(/\s\s+/g, ' ').replace(/\s+/g, '')
+      compraPasada.creado = new Date()
 
       purchase = await this.comprasRepository.save(compraPasada)
     }
 
-    if(compra && !createCompraDto.cantidad ) {   //si el producto existe en el listado de compras y no existe cantidad, es porque se modifico algun otro campo del objeto, entonces guardo solo lo modificado
+    if (compra && !createCompraDto.cantidad) {   //si el producto existe en el listado de compras y no existe cantidad, es porque se modifico algun otro campo del objeto, entonces guardo solo lo modificado
       const compraPasada: Compras = compra
       compraPasada.nombre = nombre
       compraPasada.marca = marca
       compraPasada.modelo = modelo
-      compraPasada.descripcion = (nombre + marca + modelo  + barras + factura + notas).replace(/\s\s+/g, ' ').replace(/\s+/g, '')
+      compraPasada.descripcion = (nombre + marca + modelo + barras + factura + notas).replace(/\s\s+/g, ' ').replace(/\s+/g, '')
 
-      purchase =  await this.comprasRepository.save(compraPasada)
+      purchase = await this.comprasRepository.save(compraPasada)
     }
 
     await this.socketService.emitirCompras()
@@ -95,7 +95,7 @@ export class ComprasService {
 
   async findOne(req: Request, id: string) {
     if (!ObjectId.isValid(id)) return false
-    
+
     const _id = new ObjectId(id)
     const creador = new ObjectId(req['usuario']._id)
 
@@ -112,10 +112,10 @@ export class ComprasService {
     return compra
   }
 
-  
+
   async traerCompras(req: Request) {
     const creador = new ObjectId(req['usuario']._id)
-    const options : FindManyOptions<Compras> = {
+    const options: FindManyOptions<Compras> = {
       where: {
         creador
       },
@@ -124,8 +124,8 @@ export class ComprasService {
       }
     }
     let todas = await this.comprasRepository.find(options)
-    todas = todas.map(compras => compras.historial.sort((a,b) => a.fecha_compra > b.fecha_compra ? 1 : -1) && compras )
-    return {todas}
+    todas = todas.map(compras => compras.historial.sort((a, b) => a.fecha_compra > b.fecha_compra ? 1 : -1) && compras)
+    return { todas }
   }
 
   async eliminarTodas(req: Request) {

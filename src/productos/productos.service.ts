@@ -96,22 +96,22 @@ export class ProductosService {
     if (!producto) {
       return { redireccionar: true }
     }
-    return {producto}
+    return { producto }
   }
 
 
 
-  async findOne(req: Request, id: string) {   
+  async findOne(req: Request, id: string) {
     if (!ObjectId.isValid(id)) return false
 
     const _id = new ObjectId(id)
     let creador: ObjectId;
     let options: FindManyOptions<Productos>;
 
-    if(req['usuario']) {
+    if (req['usuario']) {
       creador = new ObjectId(req['usuario']._id)
     }
-    
+
     if (creador) {
       options = { where: { creador, _id } }
     } else {
@@ -128,7 +128,7 @@ export class ProductosService {
     const creador = new ObjectId(req['usuario']._id)
     const options: FindManyOptions<Productos> = {
       where: {
-        creador, 
+        creador,
         codigo
       }
     }
@@ -158,18 +158,18 @@ export class ProductosService {
   async editarUnProducto(req: Request, id: string, updateProductoDto: UpdateProductoDto, cliente?: boolean) {
     const { codigo, nombre, marca, modelo, barras, proveedor, notas, imagen } = updateProductoDto.producto
 
-    const producto: Productos | boolean = await this.findOne(req, id) 
+    const producto: Productos | boolean = await this.findOne(req, id)
 
     if (!producto) {
       throw new NotFoundException("Producto no existe")
     }
 
     let creador: ObjectId;
-    if(req['usuario']) {
+    if (req['usuario']) {
       creador = new ObjectId(req['usuario']._id)
     }
     const _id = new ObjectId(producto._id)
- 
+
 
     //listado proveedores
     if (proveedor && updateProductoDto.desdeForm) {
@@ -197,7 +197,7 @@ export class ProductosService {
 
     if (producto.imagen !== imagen && !imagen) {    //si seleccioné una nueva imagen
       const res = await this.imagenesService.eliminarImagen(producto.imagen)
-      if(res) {
+      if (res) {
         producto.imagen = ""
       }
     }
@@ -214,8 +214,8 @@ export class ProductosService {
     updateProductoDto.producto.creador = creador
 
     try {
-      const producto = await this.productosRepository.save(updateProductoDto.producto)  
-      if(cliente) {
+      const producto = await this.productosRepository.save(updateProductoDto.producto)
+      if (cliente) {
         await this.socketService.emitirProductos()
       }
       return { producto }
@@ -230,19 +230,19 @@ export class ProductosService {
     }
 
     try {
-      let { productos } = await this.todosProductos(req) 
+      let { productos } = await this.todosProductos(req)
 
-      if (productos.length) {      
+      if (productos.length) {
         for (const producto of productos) {
-          const productoActualizado = await this.calcularPrecios(req, producto, precio); 
+          const productoActualizado = await this.calcularPrecios(req, producto, precio);
           await this.productosRepository.save(productoActualizado)
         }
 
-        return {productos: []}
+        return { productos: [] }
 
       } else {
         return productos
-      }  
+      }
 
     } catch (error) {
       console.log(error)
@@ -256,7 +256,7 @@ export class ProductosService {
     let porcentajeTarjeta: Porcentajes | boolean = await this.porcentajeService.findOneBy(req, "TARJETA")
     let porcentajeAhoraDoce: Porcentajes | boolean = await this.porcentajeService.findOneBy(req, "AHORADOCE")
 
-    if(!precio) {
+    if (!precio) {
       const dolar = await this.dolarService.findOne(req)
       precio = Number(dolar.precio)
     }

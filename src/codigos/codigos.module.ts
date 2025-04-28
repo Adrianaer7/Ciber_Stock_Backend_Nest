@@ -12,4 +12,4 @@ import { AuthModule } from '../auth/auth.module';
   controllers: [CodigosController],
   providers: [CodigosService],
 })
-export class CodigosModule {}
+export class CodigosModule { }

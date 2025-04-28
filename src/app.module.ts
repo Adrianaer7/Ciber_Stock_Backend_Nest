@@ -29,7 +29,7 @@ import { WebSocketModule } from './web-socket/web-socket.module';
 @Module({
   imports: [
     //.envs
-    ConfigModule.forRoot({ isGlobal: true}),
+    ConfigModule.forRoot({ isGlobal: true }),
     //BD connection
     TypeOrmModule.forRootAsync({
       useFactory: typeOrmConfig,
@@ -66,8 +66,8 @@ import { WebSocketModule } from './web-socket/web-socket.module';
   providers: [
     AppService,
     //Personalizar mensaje del Filter
-    { 
-      provide: APP_FILTER, 
+    {
+      provide: APP_FILTER,
       useClass: ThrottlerExceptionFilter
     }
   ],

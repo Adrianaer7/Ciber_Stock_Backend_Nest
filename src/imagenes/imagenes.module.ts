@@ -13,4 +13,4 @@ import { ProductosModule } from 'src/productos/productos.module';
   providers: [ImagenesService],
   exports: [ImagenesService]
 })
-export class ImagenesModule {}
+export class ImagenesModule { }

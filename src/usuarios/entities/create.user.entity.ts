@@ -7,19 +7,19 @@ export class Usuarios {
     @ObjectIdColumn()
     _id: ObjectId;
 
-    @Column({ unique: true, nullable: false})
+    @Column({ unique: true, nullable: false })
     @IsEmail()
     email: string
 
 
-    @Column({nullable: false})
+    @Column({ nullable: false })
     @IsString()
-    nombre:string
+    nombre: string
 
 
-    @Column({nullable: false})
+    @Column({ nullable: false })
     @MinLength(6)
-    password:string
+    password: string
 
     @Column()
     token: string
@@ -27,9 +27,9 @@ export class Usuarios {
     @Column()
     confirmado: boolean
 
-    @CreateDateColumn({type: 'timestamp'})
+    @CreateDateColumn({ type: 'timestamp' })
     createAt: Date
 
-    @UpdateDateColumn({type: 'timestamp'})
+    @UpdateDateColumn({ type: 'timestamp' })
     updateAt: Date
 }

@@ -57,7 +57,7 @@ export class ImagenesService {
       const rutaBase = path.resolve(process.cwd(), '../cliente/public/imagenes');
       // Construir la ruta completa de la imagen
       const filePath = path.join(rutaBase, imagen);
-      
+
       //  Verificar si el archivo existe antes de eliminarlo
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);

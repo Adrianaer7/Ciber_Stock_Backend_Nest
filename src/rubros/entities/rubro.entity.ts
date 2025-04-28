@@ -8,7 +8,7 @@ export class Rubros {
     @ObjectIdColumn()
     _id?: ObjectId
 
-    @Column({unique: true})
+    @Column({ unique: true })
     @IsString()
     nombre: string
 

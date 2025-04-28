@@ -30,7 +30,7 @@ export class ProveedoresService {
     try {
       const proveedor = await this.proveedoresRepository.save(nuevoProveedor)
       await this.socketService.emitirProductos()
-      return {proveedor}
+      return { proveedor }
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -42,7 +42,7 @@ export class ProveedoresService {
     const creador = new ObjectId(req['usuario']._id)
     const options: FindManyOptions<Proveedores> = { where: { creador } }
     const proveedores = await this.proveedoresRepository.find(options)
-    return {proveedores}
+    return { proveedores }
   }
 
 
@@ -52,7 +52,7 @@ export class ProveedoresService {
     if (!proveedor) {
       throw new NotFoundException("El proveedor no existe")
     }
-    return {proveedor}
+    return { proveedor }
   }
 
 
@@ -84,7 +84,7 @@ export class ProveedoresService {
     if (!proveedor) {
       throw new NotFoundException("El proveedor no existe")
     }
-    
+
     const { nombre, empresa, telEmpresa, telPersonal, email } = updateProveedoreDto
 
     const creador = new ObjectId(req['usuario']._id)
@@ -97,9 +97,9 @@ export class ProveedoresService {
     updateProveedoreDto.creador = creador
     updateProveedoreDto.datos = (nombre + empresa + telPersonal + telEmpresa + email).replace(/\s\s+/g, ' ').replace(/\s+/g, '').toUpperCase()
 
-    const provider =  this.proveedoresRepository.save(updateProveedoreDto)
+    const provider = this.proveedoresRepository.save(updateProveedoreDto)
     await this.socketService.emitirProductos()
-    return {proveedor: provider}
+    return { proveedor: provider }
   }
 
 
