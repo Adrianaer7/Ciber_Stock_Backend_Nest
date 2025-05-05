@@ -3,9 +3,9 @@ export const environments = {
     PORT: 4001,
     SECRETA: 'palabrasupersecreta',
     FRONTEND_URL: "http://localhost:3000",
-    EMAIL_HOST: "smtp.mailtrap.io",
+    EMAIL_HOST: "sandbox.smtp.mailtrap.io",
     EMAIL_PORT: 2525,
-    EMAIL_USER: "fe59ab25e1170e",
-    EMAIL_PASS: "4499cbed6b3aaf",
+    EMAIL_USER: "a6951eacc75149",
+    EMAIL_PASS: "5d8a4002568e07",
     DOLAR_URL: "https://mercados.ambito.com//dolar/informal/variacion"
 }
