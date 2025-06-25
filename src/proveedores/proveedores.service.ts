@@ -98,7 +98,7 @@ export class ProveedoresService {
     updateProveedoreDto.creador = creador
     updateProveedoreDto.datos = (nombre + empresa + telPersonal + telEmpresa + email).replace(/\s\s+/g, ' ').replace(/\s+/g, '').toUpperCase()
 
-    const provider = this.proveedoresRepository.save(updateProveedoreDto)
+    const provider = await this.proveedoresRepository.save(updateProveedoreDto)
     await this.socketService.emitirProductos()
     return { proveedor: provider }
   }

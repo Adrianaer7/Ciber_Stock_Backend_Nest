@@ -5,7 +5,6 @@ export class CreateProveedorDto {
 
     @IsOptional({ message: "Formato id inválido" })
     @IsString({ message: "Formato id inválido" })
-    @IsNotEmpty({ message: "Id está vacío" })
     _id?: ObjectId
 
     @IsString({ message: "Nombre del proveedor no válido" })

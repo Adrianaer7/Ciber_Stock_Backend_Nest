@@ -5,6 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { environments } from './environments/environment';
 import { join } from 'path';
 import { CustomBadRequestFilter } from './filters/customBadRequest.filter';
+import { corsOptions } from './config/cors.config';
 
 async function bootstrap() {
   //se le puede aclarar si quiero que se construya la app sobre Express o Fastify
@@ -24,12 +25,8 @@ async function bootstrap() {
   app.useStaticAssets(join(__dirname, '../public'))
 
   // Habilitar CORS
-  app.enableCors({
-    origin: 'http://localhost:3000',
-    methods: 'GET,PUT,POST,DELETE',
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true
-  });
+  app.enableCors(corsOptions)
+
 
   await app.listen(environments.PORT);
   console.log(`Servidor conectado ${environments.PORT}`)

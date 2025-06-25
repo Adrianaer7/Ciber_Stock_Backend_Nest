@@ -75,7 +75,6 @@ import { WebSocketModule } from './web-socket/web-socket.module';
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply((req, res, next) => {
-      res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
       res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,POST,DELETE,OPTIONS');
       res.header('Access-Control-Allow-Headers', 'Content-Type, Accept');
       if (req.method === 'OPTIONS') {

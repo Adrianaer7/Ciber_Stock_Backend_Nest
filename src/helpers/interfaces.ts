@@ -36,6 +36,8 @@ export interface Usuario {
     token: string;
 }
 
+//le agrego el usuario al request por que el Request es solo de lectura
+//a parte, recibo el token en request.headers.authorization
 export interface RequestConUsuario extends Request {
     usuario: Usuario;
 }

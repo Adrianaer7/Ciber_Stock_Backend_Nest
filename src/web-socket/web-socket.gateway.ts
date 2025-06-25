@@ -6,13 +6,10 @@ import { JwtService } from "@nestjs/jwt";
 import { AuthService } from 'src/auth/auth.service';
 import { environments } from 'src/environments/environment';
 import { Inject } from '@nestjs/common';
+import { corsOptionsSocket } from 'src/config/cors.config';
 
-@WebSocketGateway({
-  cors: {
-    origin: 'http://localhost:3000',
-    credentials: true // Permite envío de cookies y autenticación
-  }
-})
+@WebSocketGateway(corsOptionsSocket)
+
 export class SocketGateways implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
 

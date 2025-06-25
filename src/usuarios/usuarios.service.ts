@@ -106,11 +106,8 @@ export class UsuariosService {
   async comprobarToken(token: string) {
     const usuario = await this.userRepository.findOneBy({ token })
 
-    if (!usuario) {
-      return { msg: false }
-    } else {
-      return { msg: true }
-    }
+    if (!usuario) throw new NotFoundException()
+    return { msg: true }
   }
 
 
