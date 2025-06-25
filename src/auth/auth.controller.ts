@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, HttpCode, HttpStatus, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, HttpCode, HttpStatus, UseGuards, Request, Res } from '@nestjs/common';
+import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { AuthGuard } from './guards/auth.guard';
 import { ThrottlerGuard } from '@nestjs/throttler';
-import { RequestConUsuario, Usuario } from 'src/helpers/interfaces';
+import { RequestConUsuario } from 'src/helpers/interfaces';
 
 @Controller('auth')
 export class AuthController {
@@ -16,9 +17,17 @@ export class AuthController {
     return this.authService.login(loginDto)
   }
 
+
   @UseGuards(AuthGuard)
   @Get()
-  usuarioAutenticado(@Request() req: RequestConUsuario) {
-    return {usuario: req.usuario}
+  @HttpCode(HttpStatus.OK)
+  usuarioAutenticado(@Request() req: RequestConUsuario, @Res() res: Response) {
+    const usuario = req.usuario
+    res.set({
+      'x-usuario-id': usuario._id.toString(), //normalmente se pone x- al ser headers personalizados -- configurar el corsConfig para que acepte esto
+      'x-usuario-email': usuario.email,
+      'x-usuario-nombre': encodeURIComponent(usuario.nombre)  //para que me "escape" los caracteres raros que pueda tener el nombre
+    });
+    return res.send() //utilizo .send() en vez de .json() por que utilizo res.set()
   }
 }

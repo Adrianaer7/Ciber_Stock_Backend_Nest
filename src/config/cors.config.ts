@@ -11,6 +11,7 @@ export const corsOptions = {
   },
   methods: 'GET,PUT,POST,DELETE',
   allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['x-usuario-id', 'x-usuario-email', 'x-usuario-nombre'],  //para que pueda enviar al front estos headers
   credentials: true
 };
 

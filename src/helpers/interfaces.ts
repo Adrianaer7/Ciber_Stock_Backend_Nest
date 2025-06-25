@@ -34,6 +34,7 @@ export interface Usuario {
     _id: string;
     email: string;
     token: string;
+    nombre?: string;
 }
 
 //le agrego el usuario al request por que el Request es solo de lectura
