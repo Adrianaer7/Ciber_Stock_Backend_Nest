@@ -5,6 +5,7 @@ import { LoginDto } from './dto/login.dto';
 import { AuthGuard } from './guards/auth.guard';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { RequestConUsuario } from 'src/helpers/interfaces';
+import { environments } from 'src/environments/environment';
 
 @Controller('auth')
 export class AuthController {
@@ -21,8 +22,13 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @Get()
   @HttpCode(HttpStatus.OK)
-  usuarioAutenticado(@Request() req: RequestConUsuario, @Res() res: Response) {
+  usuarioAutenticado(@Request() req: RequestConUsuario, @Res() res: Response) { //si importo @Res tengo que usarlo si o si
     const usuario = req.usuario
+    if(req.headers['origin'] == environments.FRONTEND_URL2) { //si me llega de react
+      return res.json({ usuario })
+    }
+
+    //si me llega de angular
     res.set({
       'x-usuario-id': usuario._id.toString(), //normalmente se pone x- al ser headers personalizados -- configurar el corsConfig para que acepte esto
       'x-usuario-email': usuario.email,
