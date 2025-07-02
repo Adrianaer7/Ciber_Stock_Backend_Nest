@@ -41,6 +41,7 @@ export class ComprasService {
     if (!compra && createCompraDto.cantidad) { //si a ese producto nunca se le hizo una compra y traigo una cantidad, agrego el producto entero
       //creo el objeto a agregar con lo que me llega del front
       const laCompra = {
+        _id: new ObjectId(),
         idProducto: producto._id,
         nombre,
         marca,

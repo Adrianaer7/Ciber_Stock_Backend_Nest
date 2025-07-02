@@ -21,9 +21,10 @@ export class ProveedoresService {
 
     const datos = (nombre + empresa + telPersonal + telEmpresa + email).replace(/\s\s+/g, ' ').replace(/\s+/g, '').toUpperCase()
     const creador = new ObjectId(req.usuario._id)
-
+    const _id = new ObjectId()
     let nuevoProveedor = this.proveedoresRepository.create({
       ...createProveedoreDto,
+      _id,
       datos,
       creador
     })

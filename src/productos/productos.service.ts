@@ -44,9 +44,10 @@ export class ProductosService {
 
     const descripcion = (codigo + nombre + marca + modelo + barras + notas).replace(/\s\s+/g, ' ').replace(/\s+/g, '').toUpperCase()
     const creador = new ObjectId(req.usuario._id)
-
+    const _id = new ObjectId()
     const nuevoProducto = this.productosRepository.create({
       ...createProductoDto,
+      _id,
       descripcion,
       creador
     })
@@ -158,7 +159,6 @@ export class ProductosService {
 
   async editarUnProducto(req: RequestConUsuario, id: string, updateProductoDto: UpdateProductoDto, cliente?: boolean) {
     const { codigo, nombre, marca, modelo, barras, proveedor, notas, imagen } = updateProductoDto.producto
-
     const producto: Productos | boolean = await this.findOne(req, id)
 
     if (!producto) {

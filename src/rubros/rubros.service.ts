@@ -24,9 +24,10 @@ export class RubrosService {
 
   async agregarRubro(req: RequestConUsuario, createRubroDto: CreateRubroDto) {
     const creador = new ObjectId(req.usuario._id)
-
+    const _id = new ObjectId()
     const nuevoRubro = this.rubrosRepository.create({
       ...createRubroDto,
+      _id,
       rentabilidad: Number(createRubroDto.rentabilidad),
       creador
     })
@@ -79,10 +80,10 @@ export class RubrosService {
       }
     }
 
-    const proveedor: Rubros = await this.rubrosRepository.findOne(options)
-    if (!proveedor) return false
+    const rubro: Rubros = await this.rubrosRepository.findOne(options)
+    if (!rubro) return false
 
-    return proveedor
+    return rubro
   }
 
 
@@ -118,7 +119,7 @@ export class RubrosService {
         if (precio_compra_peso && precio_venta > 0) {
           producto.precio_venta = (precio_compra_peso * valor_dolar_compra) * (1 + updateRubroDto.rentabilidad / 100);
         }
-        this.productosService.productoCambiado(req, id, { producto })
+        this.productosService.productoCambiado(req, producto._id.toString(), { producto })
       }
     }
 

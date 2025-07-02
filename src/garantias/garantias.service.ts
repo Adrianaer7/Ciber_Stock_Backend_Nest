@@ -27,6 +27,7 @@ export class GarantiasService {
       //si no existe una garantia con el id del producto, creo una nueva
       if (!laGarantia) {
         const nuevaGarantia = {
+          _id: new ObjectId(),
           idProducto: producto._id,
           codigo,
           detalles: [],

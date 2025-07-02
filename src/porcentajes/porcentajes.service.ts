@@ -15,8 +15,10 @@ export class PorcentajesService {
 
   agregarPorcentaje(req: RequestConUsuario, createPorcentajeDto: CreatePorcentajeDto) {
     const creador = new ObjectId(req.usuario._id)
+    const _id = new ObjectId()
     const nuevoPorcentaje = this.porcentajesRepository.create({
       ...createPorcentajeDto,
+      _id,
       creador
     })
 

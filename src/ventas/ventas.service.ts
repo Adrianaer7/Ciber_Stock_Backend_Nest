@@ -23,9 +23,10 @@ export class VentasService {
 
   async agregarVenta(req: RequestConUsuario, createVentaDto: CreateVentaDto) {
     const creador = new ObjectId(req.usuario._id)
-
+    const _id = new ObjectId()
     const nuevaVenta = this.ventasRepository.create({
       ...createVentaDto,
+      _id,
       creador
     })
 
