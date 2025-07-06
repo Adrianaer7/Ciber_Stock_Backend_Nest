@@ -309,10 +309,7 @@ export class ProductosService {
     //para que al mostrar las ventas, no muestre opcion de eliminar o editar la venta
     const venta = await this.ventasService.findOneByProductId(req, producto._id)
     if (venta) {
-      venta.existeProducto = false
-      let updateVentaDto: UpdateVentaDto
-      Object.assign(venta, updateVentaDto)
-      await this.ventasService.editarVenta(req, id, updateVentaDto)
+      await this.ventasService.editarVenta(req, id, {cantidad: 0})
     }
 
     //Eliminar la imagen del fontend

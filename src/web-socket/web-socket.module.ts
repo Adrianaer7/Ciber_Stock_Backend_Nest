@@ -8,8 +8,7 @@ import { MapProvider } from './map.provider';
 @Module({
   imports: [
     AuthModule,
-    JwtModule,
-    AuthModule
+    JwtModule
   ],
   providers: [SocketGateways, SocketService, MapProvider],
   exports: [SocketService]

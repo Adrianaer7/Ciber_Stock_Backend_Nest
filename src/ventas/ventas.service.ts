@@ -9,6 +9,7 @@ import { Productos } from 'src/productos/entities/producto.entity';
 import { ProductosService } from 'src/productos/productos.service';
 import { SocketService } from 'src/web-socket/web-socket.service';
 import { RequestConUsuario } from 'src/helpers/interfaces';
+import { UpdateProductoDto } from 'src/productos/dto/update-producto.dto';
 
 @Injectable()
 export class VentasService {
@@ -112,27 +113,19 @@ export class VentasService {
       throw new NotFoundException("La venta no existe")
     }
 
-    const producto: Productos | boolean = await this.productosService.findOne(req, updateVentaDto.idProducto)
+    const producto: Productos | boolean = await this.productosService.findOne(req, venta.idProducto.toString())
     if (!producto) {
       throw new BadRequestException("No se pueden devolver las unidades porque el producto ya no existe")
     }
 
-    const creador = new ObjectId(req.usuario._id)
-    const _id = new ObjectId(venta._id)
-
-    Object.assign(venta, updateVentaDto)
-
-    //Para asegurarme no guardo los datos que vienen del front
-    updateVentaDto._id = _id
-    updateVentaDto.creador = creador
-
     //Actualizo las unidades del producto
     producto.disponibles = producto.disponibles + updateVentaDto.cantidad
-    await this.productosService.productoCambiado(req, updateVentaDto.idProducto, producto)
+    let updateProductoDto: UpdateProductoDto = {producto}
+    await this.productosService.productoCambiado(req, venta.idProducto.toString(), updateProductoDto)
 
     //Actualizo las unidades vendidas del producto
-    updateVentaDto.unidades = venta.unidades - updateVentaDto.cantidad
-    const laVenta = await this.ventasRepository.save(updateVentaDto)
+    venta.unidades = venta.unidades - updateVentaDto.cantidad
+    const laVenta = await this.ventasRepository.save(venta)
     await this.socketService.emitirProductos()
     return { venta: laVenta }
   }
