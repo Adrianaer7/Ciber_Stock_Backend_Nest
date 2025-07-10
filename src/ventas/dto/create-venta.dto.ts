@@ -1,6 +1,10 @@
 import { IsBoolean, IsInt, IsNotEmpty, IsNumber, IsString, Min } from "class-validator";
+import { ObjectId } from "mongodb";
 
 export class CreateVentaDto {
+
+    @IsString({ message: "ID del producto no válido" })
+    _id: ObjectId
 
     @IsNotEmpty({ message: "No existe el id del producto" })
     @IsString({ message: "ID del producto no válido" })
@@ -49,4 +53,12 @@ export class CreateVentaDto {
     @IsNotEmpty({ message: "Fecha de la venta no válida" })
     @IsString({ message: "Fecha de la venta no válida" })
     fecha: string
+
+    
+    @IsString({ message: "Formato creador inválido" })
+    creador?: ObjectId
+
+    
+    @IsString({ message: "Formato creador inválido" })
+    creado?: ObjectId
 }
