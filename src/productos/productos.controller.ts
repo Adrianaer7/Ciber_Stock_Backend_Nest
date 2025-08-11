@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, UseGuards, Request, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, UseGuards, Request, Put, HttpCode, HttpStatus } from '@nestjs/common';
 import { ProductosService } from './productos.service';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
@@ -11,6 +11,7 @@ export class ProductosController {
 
   @UseGuards(AuthGuard)
   @Post()
+  @HttpCode(HttpStatus.OK)
   crearProducto(@Request() req: RequestConUsuario, @Body() createProductoDto: CreateProductoDto) {
     return this.productosService.crearProducto(req, createProductoDto);
   }

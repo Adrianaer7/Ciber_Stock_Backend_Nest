@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards, UseInterceptors, UploadedFile, BadRequestException, Request } from '@nestjs/common';
+import { Controller, Post, UseGuards, UseInterceptors, UploadedFile, BadRequestException, Request, HttpCode, HttpStatus } from '@nestjs/common';
 import { ImagenesService } from './imagenes.service';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -11,6 +11,7 @@ export class ImagenesController {
 
   @UseGuards(AuthGuard)
   @Post()
+  @HttpCode(HttpStatus.OK)
   @UseInterceptors(
     FileInterceptor('archivo', {
       storage: multer.memoryStorage(), // Almacena en buffer

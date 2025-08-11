@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Request, HttpCode, HttpStatus, Delete } from '@nestjs/common';
 import { GarantiasService } from './garantias.service';
 import { CreateGarantiaDto } from './dto/create-garantia.dto';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
@@ -10,6 +10,7 @@ export class GarantiasController {
 
   @UseGuards(AuthGuard)
   @Post()
+  @HttpCode(HttpStatus.OK)
   create(@Request() req: RequestConUsuario, @Body() createGarantiaDto: CreateGarantiaDto) {
     return this.garantiasService.crearGarantia(req, createGarantiaDto);
   }
@@ -18,5 +19,11 @@ export class GarantiasController {
   @Get()
   traerGarantias(@Request() req: RequestConUsuario) {
     return this.garantiasService.traerGarantias(req);
+  }
+
+  @UseGuards(AuthGuard)
+  @Delete()
+  eliminarGarantias(@Request() req: RequestConUsuario){
+    return this.garantiasService.eliminarTodas(req)
   }
 }

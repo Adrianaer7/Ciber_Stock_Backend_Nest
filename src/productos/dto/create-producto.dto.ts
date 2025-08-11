@@ -1,11 +1,8 @@
-import { IsArray, IsBoolean, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from "class-validator";
+import { IsArray, IsBoolean, IsInt, IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from "class-validator";
 import { ObjectId } from "mongodb";
 
 export class CreateProductoDto {
-
-    @IsOptional({ message: "Formato id inválido" })
-    @IsString({ message: "Formato id inválido" })
-    @IsNotEmpty({ message: "Id está vacío" })
+    @IsOptional()
     _id?: ObjectId
 
     @IsNotEmpty({ message: "El nombre del producto es obligatorio" })
@@ -106,9 +103,7 @@ export class CreateProductoDto {
     @IsInt({ message: "La cantidad de disponibles no es válida" })
     disponibles: number
 
-    @IsOptional({ message: "Formato creador inválido" })
-    @IsString({ message: "Formato creador inválido" })
-    @IsNotEmpty({ message: "Creador está vacío" })
+    @IsOptional()
     creador?: ObjectId
 
     @IsOptional()

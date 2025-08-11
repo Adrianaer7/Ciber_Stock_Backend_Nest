@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { Column, Entity, ObjectIdColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity, ObjectIdColumn } from "typeorm";
 
 @Entity()
 export class Porcentajes {
@@ -18,4 +18,11 @@ export class Porcentajes {
 
     @Column()
     creador: ObjectId
+
+    @BeforeInsert()
+    @BeforeUpdate()
+    uppercaseFields() {
+        this.nombre = this.nombre.toUpperCase();
+        this.tipo = this.tipo.toUpperCase();
+    }
 }

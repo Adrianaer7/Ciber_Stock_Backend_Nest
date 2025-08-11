@@ -21,7 +21,7 @@ export class ComprasService {
 
   async crearCompra(req: RequestConUsuario, createCompraDto: CreateCompraDto) {
     const creador = new ObjectId(req.usuario._id)
-    let arsAdolar: string
+    let arsAdolar: number = 0
     let purchase: Compras
 
     const { nombre, marca, modelo, codigo, precio_compra_dolar, precio_compra_peso, valor_dolar_compra, proveedor, garantia, factura, barras, fecha_compra, notas } = createCompraDto.producto
@@ -35,32 +35,34 @@ export class ComprasService {
     const compra: Compras | boolean = await this.findOne(req, producto._id.toString())
 
     if (precio_compra_peso > 0) {
-      arsAdolar = (precio_compra_peso / valor_dolar_compra).toFixed(2)
+      arsAdolar = Number((precio_compra_peso / valor_dolar_compra).toFixed(2))
     }
 
     if (!compra && createCompraDto.cantidad) { //si a ese producto nunca se le hizo una compra y traigo una cantidad, agrego el producto entero
       //creo el objeto a agregar con lo que me llega del front
-      const laCompra = {
-        _id: new ObjectId(),
-        idProducto: producto._id,
-        nombre,
-        marca,
-        modelo,
-        codigo,
-        historial: [],
-        descripcion: (nombre + marca + modelo + barras + factura + notas).replace(/\s\s+/g, ' ').replace(/\s+/g, ''),
-        creador,
-        creado: new Date()
-      }
+      const laCompra = new Compras()
+      laCompra._id =  new ObjectId()
+      laCompra.idProducto =  producto._id
+      laCompra.nombre = nombre
+      laCompra.marca = marca
+      laCompra.modelo = modelo
+      laCompra.codigo = codigo
+      laCompra.historial = []
+      laCompra.descripcion =  (nombre + marca + modelo + barras + factura + notas).replace(/\s\s+/g, ' ').replace(/\s+/g, '')
+      laCompra.creador = creador,
+      laCompra.creado = new Date()
+      
       laCompra.historial.push({
         cantidad: createCompraDto.cantidad,
-        fecha_compra, precio_compra_dolar,
+        fecha_compra, 
+        precio_compra_dolar,
+        precio_compra_peso,
         arsAdolar,
         valor_dolar_compra,
         proveedor,
         barras,
         factura,
-        garantia
+        garantia: garantia.toUpperCase()
       })
 
       purchase = await this.comprasRepository.save(laCompra)
@@ -68,7 +70,7 @@ export class ComprasService {
 
     if (compra && createCompraDto.cantidad) {    //si existe el producto en el listado de compras y la cantidad es mayora a 0, edito el producto entero
       const compraPasada: Compras = compra //guardo el primer y unico objeto coincidente
-      const datos = { cantidad: createCompraDto.cantidad, fecha_compra, precio_compra_dolar, arsAdolar, valor_dolar_compra, proveedor, barras, factura, garantia }
+      const datos = { cantidad: createCompraDto.cantidad, fecha_compra, precio_compra_dolar, precio_compra_peso, arsAdolar, valor_dolar_compra, proveedor, barras, factura, garantia }
       compraPasada.nombre = nombre
       compraPasada.marca = marca
       compraPasada.modelo = modelo

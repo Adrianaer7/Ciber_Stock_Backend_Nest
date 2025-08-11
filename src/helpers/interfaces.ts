@@ -13,11 +13,13 @@ export interface Historial {
     cantidad: string;
     fecha_compra: string;
     precio_compra_dolar: number;
+    precio_compra_peso: number;
     valor_dolar_compra: number;
     proveedor: string;
     barras: string;
     factura: string;
     garantia: string;
+    arsAdolar: number;
 }
 
 export interface DolarAmbito {

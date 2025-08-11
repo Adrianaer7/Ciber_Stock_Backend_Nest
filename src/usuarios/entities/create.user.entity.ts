@@ -1,6 +1,6 @@
 import { IsEmail, IsString, MinLength } from "class-validator";
 import { ObjectId } from "mongodb";
-import { Column, CreateDateColumn, Entity, ObjectIdColumn, UpdateDateColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, CreateDateColumn, Entity, ObjectIdColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
 export class Usuarios {
@@ -11,11 +11,9 @@ export class Usuarios {
     @IsEmail()
     email: string
 
-
     @Column({ nullable: false })
     @IsString()
     nombre: string
-
 
     @Column({ nullable: false })
     @MinLength(6)
@@ -32,4 +30,10 @@ export class Usuarios {
 
     @UpdateDateColumn({ type: 'timestamp' })
     updateAt: Date
+
+    @BeforeInsert()
+    @BeforeUpdate()
+    uppercaseFields() {
+        this.nombre = this.nombre.toUpperCase();
+    }
 }

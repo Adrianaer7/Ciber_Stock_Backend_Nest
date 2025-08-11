@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, UseGuards, Request, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, UseGuards, Request, Put, HttpCode, HttpStatus } from '@nestjs/common';
 import { ProveedoresService } from './proveedores.service';
 import { CreateProveedorDto } from './dto/create-proveedore.dto';
 import { UpdateProveedorDto } from './dto/update-proveedore.dto';
@@ -11,6 +11,7 @@ export class ProveedoresController {
 
   @UseGuards(AuthGuard)
   @Post()
+  @HttpCode(HttpStatus.OK)
   agregarProveedor(@Request() req: RequestConUsuario, @Body() createProveedoreDto: CreateProveedorDto) {
     return this.proveedoresService.agregarProveedor(req, createProveedoreDto);
   }

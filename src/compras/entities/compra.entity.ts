@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, ObjectIdColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, CreateDateColumn, Entity, ObjectIdColumn } from "typeorm";
 import { ObjectId } from "mongodb";
 import { Historial } from "src/helpers/interfaces";
 
@@ -36,4 +36,13 @@ export class Compras {
 
     @Column('int')
     __v?: number
+
+    @BeforeInsert()
+    @BeforeUpdate()
+    uppercaseFields() {
+        this.nombre = this.nombre.toUpperCase();
+        this.marca = this.marca.toUpperCase();
+        this.modelo = this.modelo.toUpperCase()
+        this.descripcion = this.descripcion.toUpperCase()
+    }
 }

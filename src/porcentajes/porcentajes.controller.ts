@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Request, UseGuards, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Request, UseGuards, Put, HttpCode, HttpStatus } from '@nestjs/common';
 import { PorcentajesService } from './porcentajes.service';
 import { CreatePorcentajeDto } from './dto/create-porcentaje.dto';
 import { UpdatePorcentajeDto } from './dto/update-porcentaje.dto';
@@ -11,6 +11,7 @@ export class PorcentajesController {
 
   @UseGuards(AuthGuard)
   @Post()
+  @HttpCode(HttpStatus.OK)
   agregarPorcentaje(@Request() req: RequestConUsuario, @Body() createPorcentajeDto: CreatePorcentajeDto) {
     return this.porcentajesService.agregarPorcentaje(req, createPorcentajeDto);
   }

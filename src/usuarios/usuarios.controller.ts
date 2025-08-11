@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, BadRequestException, UseGuards, Request, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, BadRequestException, UseGuards, Request, HttpCode, HttpStatus } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { ChangePasswordDto } from './dto/cambiarPassword.dto';
@@ -13,6 +13,7 @@ export class UsuariosController {
 
   @UseGuards(ThrottlerGuard)
   @Post()
+  @HttpCode(HttpStatus.OK)
   nuevoUsuario(@Body() createUsuarioDto: CreateUsuarioDto) {
     return this.usuariosService.nuevoUsuario(createUsuarioDto);
   }

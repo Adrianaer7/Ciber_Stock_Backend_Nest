@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 import { Detalles } from "src/helpers/interfaces";
-import { Column, CreateDateColumn, Entity, ObjectIdColumn, PrimaryColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, CreateDateColumn, Entity, ObjectIdColumn, PrimaryColumn } from "typeorm";
 
 @Entity()
 export class Garantias {

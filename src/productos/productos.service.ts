@@ -42,7 +42,7 @@ export class ProductosService {
       createProductoDto.faltante = true
     }
 
-    const descripcion = (codigo + nombre + marca + modelo + barras + notas).replace(/\s\s+/g, ' ').replace(/\s+/g, '').toUpperCase()
+    const descripcion = (codigo + nombre + marca + modelo + barras + notas).replace(/\s\s+/g, ' ').replace(/\s+/g, '')
     const creador = new ObjectId(req.usuario._id)
     const _id = new ObjectId()
     const nuevoProducto = this.productosRepository.create({
@@ -206,7 +206,7 @@ export class ProductosService {
 
     Object.assign(producto, updateProductoDto.producto)
 
-    updateProductoDto.producto.descripcion = (codigo + nombre + marca + modelo + barras + notas).replace(/\s\s+/g, ' ').replace(/\s+/g, '').toUpperCase()
+    updateProductoDto.producto.descripcion = (codigo + nombre + marca + modelo + barras + notas).replace(/\s\s+/g, ' ').replace(/\s+/g, '')
 
     updateProductoDto.producto = await this.calcularPrecios(req, updateProductoDto.producto, updateProductoDto.precio)
 

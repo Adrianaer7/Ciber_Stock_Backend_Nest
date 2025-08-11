@@ -26,24 +26,22 @@ export class GarantiasService {
 
       //si no existe una garantia con el id del producto, creo una nueva
       if (!laGarantia) {
-        const nuevaGarantia = {
-          _id: new ObjectId(),
-          idProducto: producto._id,
-          codigo,
-          detalles: [],
-          creador
-        }
-        nuevaGarantia.detalles.push({
-          caducidad: garantia,
+        const nuevaGarantia = new Garantias()
+        nuevaGarantia._id = new ObjectId()
+        nuevaGarantia.idProducto = producto._id,
+        nuevaGarantia.codigo = codigo,
+        nuevaGarantia.creador = creador
+        nuevaGarantia.detalles = [{
+          caducidad: garantia.toUpperCase(),
           proveedor
-        })
-
+        }]
         return await this.garantiasRepository.save(nuevaGarantia)
+
       } else {
         const { detalles } = laGarantia
         const indice = detalles.map(detalle => detalle.proveedor).indexOf(proveedor)    //si el proveedor que traigo del body es el mismo que está en el detalle, devuelvo su posicion en el array de detalles, sino devuelvo -1
         let detalle = {
-          caducidad: garantia,
+          caducidad: garantia.toUpperCase(),
           proveedor
         }
         //si no existe el proveedor, añado el nuevo proveedor a la garantia
@@ -52,7 +50,7 @@ export class GarantiasService {
           return await this.garantiasRepository.save(laGarantia)
         } else {
           //si existe, solo lo reemplazo con lo nuevo del body
-          laGarantia.detalles[indice].caducidad = garantia
+          laGarantia.detalles[indice].caducidad = garantia.toUpperCase()
           return await this.garantiasRepository.save(laGarantia)
         }
       }
@@ -81,5 +79,19 @@ export class GarantiasService {
     const options: FindManyOptions<Garantias> = { where: { creador } }
     const garantias = await this.garantiasRepository.find(options)
     return { garantias }
+  }
+
+  async eliminarTodas(req: RequestConUsuario) {
+    const creador = new ObjectId(req.usuario._id)
+    const options: FindManyOptions<Garantias> = { where: { creador } }
+
+    const productos = await this.garantiasRepository.find(options)
+    if (!productos.length) {
+      return { msg: "No se encontraron garantias a eliminar" }
+    }
+
+    await this.garantiasRepository.remove(productos)
+
+    return { msg: "Todos las garantias se eliminaron" }
   }
 }

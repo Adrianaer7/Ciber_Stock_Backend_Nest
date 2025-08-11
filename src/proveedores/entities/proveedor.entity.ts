@@ -1,6 +1,6 @@
 import { IsEmail } from "class-validator";
 import { ObjectId } from "mongodb";
-import { Column, Entity, ObjectIdColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity, ObjectIdColumn } from "typeorm";
 
 @Entity()
 export class Proveedores {
@@ -31,4 +31,13 @@ export class Proveedores {
 
     @Column('int')
     __v: number
+
+    @BeforeInsert()
+    @BeforeUpdate()
+    uppercaseFields() {
+        this.nombre = this.nombre.toUpperCase();
+        this.empresa = this.empresa.toUpperCase();
+        this.email = this.email.toUpperCase()
+        this.datos = this.datos.toUpperCase()
+    }
 }

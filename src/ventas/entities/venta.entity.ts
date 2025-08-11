@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { Column, CreateDateColumn, Entity, ObjectIdColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, CreateDateColumn, Entity, ObjectIdColumn } from "typeorm";
 
 @Entity()
 export class Ventas {
@@ -54,4 +54,13 @@ export class Ventas {
 
     @Column('int')
     __v: number
+
+    @BeforeInsert()
+    @BeforeUpdate()
+    uppercaseFields() {
+        this.nombre = this.nombre.toUpperCase();
+        this.marca = this.marca.toUpperCase();
+        this.modelo = this.modelo.toUpperCase()
+        this.descripcion = this.descripcion.toUpperCase()
+    }
 }
