@@ -116,5 +116,6 @@ export class Productos {
         this.rubro = this.rubro.toUpperCase()
         this.garantia = this.garantia.toUpperCase()
         this.notas = this.notas.toUpperCase()
+        this.descripcion = this.descripcion.toUpperCase()
     }
 }

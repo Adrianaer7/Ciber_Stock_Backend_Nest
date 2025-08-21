@@ -4,6 +4,11 @@ import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as multer from 'multer';
 import { RequestConUsuario } from 'src/helpers/interfaces';
+import { fileFilter } from 'src/helpers/fileFilter.helper';
+import { diskStorage } from 'multer';
+import { fileNamer } from 'src/helpers/fileNamer.helper';
+import { environments } from 'src/environments/environment';
+
 
 @Controller('imagenes')
 export class ImagenesController {
@@ -14,15 +19,23 @@ export class ImagenesController {
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(
     FileInterceptor('archivo', {
-      storage: multer.memoryStorage(), // Almacena en buffer
-      limits: { fileSize: 50 * 1024 * 1024 }, // 50MB máximo
+      fileFilter: fileFilter,
+      storage: diskStorage({
+        destination: './static/productos',
+        filename: fileNamer,
+      }),
+      //limits: { fileSize: 50 * 1024 * 1024 }, // 50MB máximo
     })
   )
   guardarImagen(@Request() req: RequestConUsuario, @UploadedFile() file: Express.Multer.File) {
     if (!file) {
       throw new BadRequestException('La Imagen es Obligatoria')
     }
-    return this.imagenesService.guardarImagen(req, file);
+    const secureUrl = `${environments.BACKEND_URL}/static/productos/${file.filename}`;
+    return { 
+      secureUrl, 
+      fileName: file.filename 
+    };
   }
 
 }

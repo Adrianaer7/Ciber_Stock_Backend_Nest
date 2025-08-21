@@ -28,7 +28,7 @@ export class ImagenesService {
 
     // Generar un nombre único para la imagen
     const extension = path.extname(file.originalname);
-    const fileName = `${generarId()}${extension}`;  //multer le pone nombres muy grandes a los archivos que subo, para eso uso mejor nanoid y le añido la extension
+    const fileName = `${generarId()}${extension}`;  //multer le pone nombres muy grandes a los archivos que subo, para eso le creo yo el id
 
     // Generar la ruta
     const filePath = path.join(rutaBase, fileName);

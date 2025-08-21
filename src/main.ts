@@ -21,11 +21,13 @@ async function bootstrap() {
   //personalizar objeto de respuesta
   app.useGlobalFilters(new CustomBadRequestFilter())
 
-  //Habilitar carpeta pública. De esta manera puedo acceder a los archivos que hay en la carpeta uploads poniendo el nombre del archivo en la url
-  app.useStaticAssets(join(__dirname, '../public'))
-
   // Habilitar CORS
   app.enableCors(corsOptions)
+
+  //Habilitar carpeta pública. De esta manera puedo acceder a los archivos que hay en la carpeta uploads poniendo el nombre del archivo en la url
+  app.useStaticAssets(join(__dirname, '../static'), {
+    prefix: '/static',
+  });
 
 
   await app.listen(environments.PORT);

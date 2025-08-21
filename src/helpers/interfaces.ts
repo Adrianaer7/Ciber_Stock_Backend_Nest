@@ -10,7 +10,7 @@ export interface JwtPayload {
 }
 
 export interface Historial {
-    cantidad: string;
+    cantidad: number;
     fecha_compra: string;
     precio_compra_dolar: number;
     precio_compra_peso: number;
