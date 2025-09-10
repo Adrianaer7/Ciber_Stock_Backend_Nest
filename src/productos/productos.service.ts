@@ -2,13 +2,12 @@ import { BadRequestException, forwardRef, Inject, Injectable, InternalServerErro
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Productos } from './entities/producto.entity';
-import { FindManyOptions, FindOptionsWhere, Repository } from 'typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
 import { ObjectId } from 'mongodb';
 import { UpdateProductoDto } from './dto/update-producto.dto';
 import * as path from 'path';
 import * as fs from 'fs';
 import { VentasService } from 'src/ventas/ventas.service';
-import { UpdateVentaDto } from 'src/ventas/dto/update-venta.dto';
 import { PorcentajesService } from 'src/porcentajes/porcentajes.service';
 import { Porcentajes } from 'src/porcentajes/entities/porcentajes.entity';
 import { ImagenesService } from 'src/imagenes/imagenes.service';
@@ -28,7 +27,7 @@ export class ProductosService {
     @Inject(forwardRef(() => DolaresService))
     private readonly dolarService: DolaresService,
 
-    @Inject(forwardRef(() => VentasService))  //Uso el forwardRef cuando dos módulos se importan mutuamente. Por ej, producto importa ventas, pero el modulo de ventas importa productos
+    @Inject(forwardRef(() => VentasService))  //Uso el forwardRef cuando dos módulos se importan mutuamente. Por ej, producto importa ventas, y el modulo de ventas importa productos
     private readonly ventasService: VentasService,
 
     @Inject(forwardRef(() => ImagenesService))
@@ -202,9 +201,6 @@ export class ProductosService {
         producto.imagen = ""
       }
     }
-
-
-    Object.assign(producto, updateProductoDto.producto)
 
     updateProductoDto.producto.descripcion = (codigo + nombre + marca + modelo + barras + notas).replace(/\s\s+/g, ' ').replace(/\s+/g, '')
 

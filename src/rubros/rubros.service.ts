@@ -97,8 +97,6 @@ export class RubrosService {
     const creador = new ObjectId(req.usuario._id)
     const _id = new ObjectId(rubro._id)
 
-    Object.assign(rubro, updateRubroDto)
-
     //Para asegurarme no guardo los datos que vienen del front
     updateRubroDto._id = _id
     updateRubroDto.creador = creador

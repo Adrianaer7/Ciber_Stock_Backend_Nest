@@ -15,7 +15,7 @@ export class DolaresService {
   constructor(
     @InjectRepository(Dolares)
     private readonly dolaresRepository: Repository<Dolares>,
-    @Inject(forwardRef(() => ProductosService))
+    @Inject(forwardRef(() => ProductosService)) //forwardRef cuando las inyecciones de dependencias son bidireccionales
     private readonly productosService: ProductosService
   ) { }
 

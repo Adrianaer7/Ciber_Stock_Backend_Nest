@@ -41,16 +41,16 @@ export class PorcentajesService {
     if (!porcentaje) {
       throw new NotFoundException("El porcentaje no existe")
     }
-
     return { porcentaje }
   }
+
+
 
   async findOne(req: RequestConUsuario, id: string) {
     if (!ObjectId.isValid(id)) return false
 
     const _id = new ObjectId(id)
     const creador = new ObjectId(req.usuario._id)
-
     const options: FindManyOptions<Porcentajes> = {
       where: {
         creador,
@@ -60,14 +60,13 @@ export class PorcentajesService {
 
     const porcentaje: Porcentajes = await this.porcentajesRepository.findOne(options)
     if (!porcentaje) return false
-
     return porcentaje
   }
 
+
+
   async findOneBy(req: RequestConUsuario, tipo: string) {
-
     const creador = new ObjectId(req.usuario._id)
-
     const options: FindManyOptions<Porcentajes> = {
       where: {
         creador,
@@ -76,9 +75,10 @@ export class PorcentajesService {
     }
 
     const porcentaje: Porcentajes = await this.porcentajesRepository.findOne(options)
-
     return porcentaje
   }
+
+
 
   async editarPorcentaje(req: RequestConUsuario, updatePorcentajeDto: UpdatePorcentajeDto, id: string) {
     const porcentaje: Porcentajes | boolean = await this.findOne(req, id)
@@ -92,7 +92,6 @@ export class PorcentajesService {
     Object.assign(porcentaje, updatePorcentajeDto)
     updatePorcentajeDto._id = _id
     updatePorcentajeDto.creador = creador
-
 
     const percentaje = await this.porcentajesRepository.save(updatePorcentajeDto)
     return { porcentaje: percentaje }

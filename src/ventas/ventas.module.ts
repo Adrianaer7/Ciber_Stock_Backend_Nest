@@ -10,7 +10,7 @@ import { WebSocketModule } from 'src/web-socket/web-socket.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Ventas, Productos]),
+    TypeOrmModule.forFeature([Ventas]),
     forwardRef(() => ProductosModule),
     AuthModule,
     WebSocketModule

@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -42,8 +42,8 @@ import { WebSocketModule } from './web-socket/web-socket.module';
     }),
     //Limiter
     ThrottlerModule.forRoot([{
-      ttl: 100000,// Tiempo de vida en ms (ventana de tiempo)
-      limit: 50, // Cantidad máxima de solicitudes permitidas en esa ventana
+      ttl: 10000,// Tiempo de vida en ms (ventana de tiempo)
+      limit: 1, // Cantidad máxima de solicitudes permitidas en esa ventana
     }]),
     //Modulos propios
     AuthModule,
@@ -72,15 +72,4 @@ import { WebSocketModule } from './web-socket/web-socket.module';
     }
   ],
 })
-export class AppModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply((req, res, next) => {
-      res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,POST,DELETE,OPTIONS');
-      res.header('Access-Control-Allow-Headers', 'Content-Type, Accept');
-      if (req.method === 'OPTIONS') {
-        return res.status(200).end();
-      }
-      next();
-    }).forRoutes('*');
-  }
-}
+export class AppModule { }

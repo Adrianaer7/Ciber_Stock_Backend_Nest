@@ -37,6 +37,7 @@ export class Compras {
     @Column('int')
     __v?: number
 
+    //antes de guardar, convierto a mayusculas algunos campos
     @BeforeInsert()
     @BeforeUpdate()
     uppercaseFields() {

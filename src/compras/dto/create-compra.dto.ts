@@ -1,4 +1,4 @@
-import { IsBoolean, IsInt, IsNotEmpty, IsString, Min, ValidateNested } from "class-validator";
+import { IsBoolean, IsInt, IsNotEmpty, Min, ValidateNested } from "class-validator";
 import { CreateProductoDto } from "src/productos/dto/create-producto.dto";
 import { Type } from 'class-transformer';
 
@@ -12,6 +12,7 @@ export class CreateCompraDto {
     @IsBoolean({ message: "Origen no válido" })
     desdeForm: boolean;
 
+    //valido todos los campos del producto usando el dto de producto
     @ValidateNested()
     @Type(() => CreateProductoDto)
     producto: CreateProductoDto

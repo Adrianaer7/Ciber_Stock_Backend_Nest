@@ -92,8 +92,6 @@ export class ProveedoresService {
     const creador = new ObjectId(req.usuario._id)
     const _id = new ObjectId(proveedor._id)
 
-    Object.assign(proveedor, updateProveedoreDto)
-
     //Para asegurarme no guardo los datos que vienen del front
     updateProveedoreDto._id = _id
     updateProveedoreDto.creador = creador
