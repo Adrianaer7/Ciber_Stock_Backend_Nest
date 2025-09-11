@@ -14,7 +14,7 @@ export class FaltantesController {
   }
 
   @UseGuards(AuthGuard)
-  @Put(':id')
+  @Get(':id')
   crearFaltante(@Request() req: RequestConUsuario, @Param() id: string) {
     return this.faltantesService.crearFaltante(req, id);
   }
