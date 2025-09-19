@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import * as express from 'express'; 
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ValidationPipe } from '@nestjs/common';
 import { environments } from './environments/environment';
@@ -29,7 +30,9 @@ async function bootstrap() {
     prefix: '/static',
   });
 
-
+  //maximo tamaño de payload
+  app.use(express.json({ limit: '5mb' }));
+  
   await app.listen(environments.PORT);
   console.log(`Servidor conectado ${environments.PORT}`)
 }

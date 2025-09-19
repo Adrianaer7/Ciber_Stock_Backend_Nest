@@ -2,6 +2,7 @@ export const fileFilter = ( req: Express.Request, file: Express.Multer.File, cal
 
     if ( !file ) return callback( new Error('No se adjuntó ningun archivo'), false );
 
+    if (!file.mimetype.startsWith('image/')) return callback(new Error('Solo se permiten imágenes'), false)
 
     const fileExptension = file.mimetype.split('/')[1];
     const validExtensions = ['jpg','jpeg','png','gif'];
