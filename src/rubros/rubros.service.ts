@@ -138,6 +138,10 @@ export class RubrosService {
       throw new NotFoundException("El rubro no existe")
     }
 
+    const productos = await this.productosRepository.find({ where: { rubro: rubro.nombre } })
+
+    await this.limpiarPrecios(productos)
+    
     await this.rubrosRepository.remove(rubro)
     await this.socketService.emitirRubros()
     return { msg: "Rubro eliminado" }
@@ -157,6 +161,20 @@ export class RubrosService {
     await this.rubrosRepository.remove(rubros)
 
     return { msg: "Todos los rubros se eliminaron" }
+  }
+
+  async limpiarPrecios(productos: Productos[]) {
+    for await (const producto of productos) {
+      producto.rubro = ''
+      producto.rubroValor = 0
+      producto.precio_venta = 0
+      producto.precio_venta_conocidos = 0
+      producto.precio_venta_efectivo = 0
+      producto.precio_venta_tarjeta = 0
+      producto.precio_venta_ahoraDoce = 0
+      producto.precio_venta_cuotas = 0
+      await this.productosRepository.save(producto)
+    }
   }
 
 }
