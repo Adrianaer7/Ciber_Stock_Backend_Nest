@@ -97,9 +97,13 @@ export class RubrosService {
     const creador = new ObjectId(req.usuario._id)
     const _id = new ObjectId(rubro._id)
 
+    Object.assign(rubro, updateRubroDto)
+
+
+
     //Para asegurarme no guardo los datos que vienen del front
-    updateRubroDto._id = _id
-    updateRubroDto.creador = creador
+    rubro._id = _id
+    rubro.creador = creador
 
     //Busco productos que tengan el nombre del rubro y los actualizo
     const options: FindManyOptions<Productos> = { where: { creador, rubro: updateRubroDto.nombre } }
@@ -121,7 +125,7 @@ export class RubrosService {
       }
     }
 
-    const category = await this.rubrosRepository.save(updateRubroDto)
+    const category = await this.rubrosRepository.save(rubro)
     await this.socketService.emitirRubros()
     return { rubro: category }
   }

@@ -9,9 +9,6 @@ export class CreateCompraDto {
     @Min(1, { message: "La cantidad tiene que ser mayor que 0" })
     cantidad: number;
 
-    @IsBoolean({ message: "Origen no válido" })
-    desdeForm: boolean;
-
     //valido todos los campos del producto usando el dto de producto
     @ValidateNested()
     @Type(() => CreateProductoDto)

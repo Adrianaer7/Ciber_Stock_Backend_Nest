@@ -48,7 +48,6 @@ export class ImagenesService {
       await this.productosService.editarUnProducto(req, producto._id.toString(), { producto });
 
     } catch (error) {
-      console.log(error)
       throw new BadRequestException(`Error al actualizar el producto: ${error.message}`);
     }
   }
@@ -64,7 +63,6 @@ export class ImagenesService {
         fs.unlinkSync(filePath);
       }
     } catch (error) {
-      console.log(error.message)
       throw new BadRequestException(`Error al eliminar la imagen: ${error.message}`);
     }
     return true

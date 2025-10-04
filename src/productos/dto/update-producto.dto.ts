@@ -6,10 +6,6 @@ import { ObjectId } from 'mongodb';
 
 export class UpdateProductoDto extends PartialType(CreateProductoDto) {
     @IsOptional()
-    @IsBoolean({ message: "Formato de desdeForm inválido" })
-    desdeForm?: boolean;
-
-    @IsOptional()
     @IsNumber({}, { message: "Precio no válido" })
     precio?: number;
 

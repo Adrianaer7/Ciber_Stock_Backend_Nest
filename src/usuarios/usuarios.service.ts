@@ -22,12 +22,13 @@ export class UsuariosService {
 
   async nuevoUsuario(createUsuarioDto: CreateUsuarioDto) {
     //quito la contraseña de usuario
-    const { password, ...usuario } = createUsuarioDto
+    const { nombre, email, password } = createUsuarioDto
     const token = generarId()
     try {
       //creo instancia
       const nuevoUsuario = this.userRepository.create({
-        ...usuario,
+        nombre: nombre.toUpperCase(),
+        email,
         password: bcrypt.hashSync(password, 10),
         token,
         confirmado: false
@@ -38,8 +39,8 @@ export class UsuariosService {
 
       //envio mail
       await this.emailService.emailRegistro({
-        email: usuario.email,
-        nombre: usuario.nombre,
+        email,
+        nombre,
         token
       })
 

@@ -92,12 +92,16 @@ export class ProveedoresService {
     const creador = new ObjectId(req.usuario._id)
     const _id = new ObjectId(proveedor._id)
 
-    //Para asegurarme no guardo los datos que vienen del front
-    updateProveedoreDto._id = _id
-    updateProveedoreDto.creador = creador
-    updateProveedoreDto.datos = (nombre + empresa + telPersonal + telEmpresa + email).replace(/\s\s+/g, ' ').replace(/\s+/g, '')
+    Object.assign(proveedor, updateProveedoreDto)
 
-    const provider = await this.proveedoresRepository.save(updateProveedoreDto)
+
+
+    //Para asegurarme no guardo los datos que vienen del front
+    proveedor._id = _id
+    proveedor.creador = creador
+    proveedor.datos = (nombre + empresa + telPersonal + telEmpresa + email).replace(/\s\s+/g, ' ').replace(/\s+/g, '')
+
+    const provider = await this.proveedoresRepository.save(proveedor)
     await this.socketService.emitirProductos()
     return { proveedor: provider }
   }

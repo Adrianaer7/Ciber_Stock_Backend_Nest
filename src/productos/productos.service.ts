@@ -158,9 +158,9 @@ export class ProductosService {
 
   async editarUnProducto(req: RequestConUsuario, id: string, updateProductoDto: UpdateProductoDto, cliente?: boolean) {
     const { codigo, nombre, marca, modelo, barras, proveedor, notas, imagen } = updateProductoDto.producto
-    const producto: Productos | boolean = await this.findOne(req, id)
+    const product: Productos | boolean = await this.findOne(req, id)
 
-    if (!producto) {
+    if (!product) {
       throw new NotFoundException("Producto no existe")
     }
 
@@ -168,20 +168,7 @@ export class ProductosService {
     if (req.usuario) {
       creador = new ObjectId(req.usuario._id)
     }
-    const _id = new ObjectId(producto._id)
-
-
-    //listado proveedores
-    if (proveedor && updateProductoDto.desdeForm) {
-      if (!updateProductoDto.producto.todos_proveedores.length) {   //si no hay ningun proveedor
-        updateProductoDto.producto.todos_proveedores.push(proveedor)
-      } else {
-        let proveedorIgual = updateProductoDto.producto.todos_proveedores.find(provider => provider === proveedor)
-        if (!proveedorIgual) {  //si existen proveedores, pero ninguno igual
-          updateProductoDto.producto.todos_proveedores.push(proveedor)
-        }
-      }
-    }
+    const _id = new ObjectId(product._id)
 
     //faltante
     if (updateProductoDto.producto.disponibles <= updateProductoDto.producto.limiteFaltante && updateProductoDto.producto.añadirFaltante) {
@@ -190,28 +177,30 @@ export class ProductosService {
       updateProductoDto.producto.faltante = false
     }
 
-    //Eliminar la imagen del fontend
-    if (producto.imagen !== imagen && imagen) {    //si seleccioné una nueva imagen
-      producto.imagen = imagen
+    //si seleccioné una nueva imagen
+    if (product.imagen !== imagen && imagen) {    
+      product.imagen = imagen
     }
 
-    if (producto.imagen !== imagen && !imagen) {    //si seleccioné una nueva imagen
-      const res = await this.imagenesService.eliminarImagen(producto.imagen)
+    //si eliminé la imagen
+    if (product.imagen !== imagen && !imagen) {    
+      const res = await this.imagenesService.eliminarImagen(product.imagen)
       if (res) {
-        producto.imagen = ""
+        product.imagen = ""
       }
     }
 
-    updateProductoDto.producto.descripcion = (codigo + nombre + marca + modelo + barras + notas).replace(/\s\s+/g, ' ').replace(/\s+/g, '')
+    Object.assign(product, updateProductoDto.producto);
 
-    updateProductoDto.producto = await this.calcularPrecios(req, updateProductoDto.producto, updateProductoDto.precio)
+    product.descripcion = (codigo + nombre + marca + modelo + barras + notas).replace(/\s\s+/g, ' ').replace(/\s+/g, '');
 
-    //Para asegurarme no guardo los datos que vienen del front 
-    updateProductoDto.producto._id = _id
-    updateProductoDto.producto.creador = creador
+    await this.calcularPrecios(req, product, updateProductoDto.precio);
+
+    product._id = _id;
+    product.creador = creador;
 
     try {
-      const producto = await this.productosRepository.save(updateProductoDto.producto)
+      const producto = await this.productosRepository.save(product)
       if (cliente) {
         await this.socketService.emitirProductos()
       }
@@ -305,7 +294,7 @@ export class ProductosService {
     //para que al mostrar las ventas, no muestre opcion de eliminar o editar la venta
     const venta = await this.ventasService.findOneByProductId(req, producto._id)
     if (venta) {
-      await this.ventasService.editarVenta(req, id, {cantidad: 0})
+      await this.ventasService.editarVenta(req, id, { cantidad: 0 })
     }
 
     //Eliminar la imagen del fontend
