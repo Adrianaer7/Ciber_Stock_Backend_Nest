@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { RubrosService } from './rubros.service';
 import { RubrosController } from './rubros.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -10,7 +10,8 @@ import { WebSocketModule } from 'src/web-socket/web-socket.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Rubros, Productos]),
+    TypeOrmModule.forFeature([Rubros]),
+    forwardRef(() => ProductosModule),
     AuthModule,
     ProductosModule,
     WebSocketModule

@@ -16,8 +16,6 @@ export class RubrosService {
   constructor(
     @InjectRepository(Rubros)
     private readonly rubrosRepository: Repository<Rubros>,
-    @InjectRepository(Productos)
-    private readonly productosRepository: Repository<Productos>,
     private readonly productosService: ProductosService,
     private readonly socketService: SocketService,
   ) { }
@@ -106,8 +104,7 @@ export class RubrosService {
     rubro.creador = creador
 
     //Busco productos que tengan el nombre del rubro y los actualizo
-    const options: FindManyOptions<Productos> = { where: { creador, rubro: updateRubroDto.nombre } }
-    const productos: Productos[] = await this.productosRepository.find(options)
+    const productos = await this.productosService.findByRubro(req, rubro.nombre)
 
     if (productos.length) {
       for (const producto of productos) {
@@ -138,9 +135,9 @@ export class RubrosService {
       throw new NotFoundException("El rubro no existe")
     }
 
-    const productos = await this.productosRepository.find({ where: { rubro: rubro.nombre } })
+    const productos = await this.productosService.findByRubro(req, rubro.nombre)
 
-    await this.limpiarPrecios(productos)
+    await this.limpiarPrecios(req, productos)
     
     await this.rubrosRepository.remove(rubro)
     await this.socketService.emitirRubros()
@@ -158,12 +155,20 @@ export class RubrosService {
       return { msg: "No se encontraron rubros a eliminar" }
     }
 
+    const {productos} = await this.productosService.todosProductos(req)
+    for await(const rubro of rubros) {
+      const productosConRubro = productos.filter(p => p.rubro == rubro.nombre)
+      await this.limpiarPrecios(req, productosConRubro)
+    }
+
     await this.rubrosRepository.remove(rubros)
 
     return { msg: "Todos los rubros se eliminaron" }
   }
 
-  async limpiarPrecios(productos: Productos[]) {
+  
+
+  async limpiarPrecios(req: RequestConUsuario, productos: Productos[]) {
     for await (const producto of productos) {
       producto.rubro = ''
       producto.rubroValor = 0
@@ -173,7 +178,7 @@ export class RubrosService {
       producto.precio_venta_tarjeta = 0
       producto.precio_venta_ahoraDoce = 0
       producto.precio_venta_cuotas = 0
-      await this.productosRepository.save(producto)
+      await this.productosService.editarUnProducto(req, producto._id.toString(), { producto })
     }
   }
 

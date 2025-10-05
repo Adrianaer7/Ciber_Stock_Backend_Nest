@@ -155,9 +155,20 @@ export class ProductosService {
     return producto
   }
 
+  async findByRubro(req: RequestConUsuario, rubro: string) {
+    const creador = new ObjectId(req.usuario._id)
+    const options: FindManyOptions<Productos> = {
+      where: {
+        creador,
+        rubro
+      }
+    }
+    return await this.productosRepository.find(options)
+  }
+
 
   async editarUnProducto(req: RequestConUsuario, id: string, updateProductoDto: UpdateProductoDto, cliente?: boolean) {
-    const { codigo, nombre, marca, modelo, barras, proveedor, notas, imagen } = updateProductoDto.producto
+    const { codigo, nombre, marca, modelo, barras, notas, imagen } = updateProductoDto.producto
     const product: Productos | boolean = await this.findOne(req, id)
 
     if (!product) {
@@ -178,12 +189,12 @@ export class ProductosService {
     }
 
     //si seleccioné una nueva imagen
-    if (product.imagen !== imagen && imagen) {    
+    if (product.imagen !== imagen && imagen) {
       product.imagen = imagen
     }
 
     //si eliminé la imagen
-    if (product.imagen !== imagen && !imagen) {    
+    if (product.imagen !== imagen && !imagen) {
       const res = await this.imagenesService.eliminarImagen(product.imagen)
       if (res) {
         product.imagen = ""

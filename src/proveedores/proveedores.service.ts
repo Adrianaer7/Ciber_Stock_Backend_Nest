@@ -7,12 +7,15 @@ import { Proveedores } from './entities/proveedor.entity';
 import { FindManyOptions, Repository } from 'typeorm';
 import { SocketService } from 'src/web-socket/web-socket.service';
 import { RequestConUsuario } from 'src/helpers/interfaces';
+import { Productos } from 'src/productos/entities/producto.entity';
+import { ProductosService } from 'src/productos/productos.service';
 
 @Injectable()
 export class ProveedoresService {
   constructor(
     @InjectRepository(Proveedores)
     private readonly proveedoresRepository: Repository<Proveedores>,
+    private readonly productosService: ProductosService,
     private readonly socketService: SocketService
   ) { }
 
@@ -114,6 +117,10 @@ export class ProveedoresService {
       throw new NotFoundException("El proveedor no existe")
     }
 
+    const {productos} = await this.productosService.todosProductos(req)
+
+    await this.limpiarProveedor(req, proveedor, productos)
+
     await this.proveedoresRepository.remove(proveedor)
     await this.socketService.emitirProductos()
     return { msg: "Proveedor eliminado" }
@@ -126,12 +133,37 @@ export class ProveedoresService {
     const options: FindManyOptions<Proveedores> = { where: { creador } }
 
     const proveedores = await this.proveedoresRepository.find(options)
+    
     if (!proveedores.length) {
       return { msg: "No se encontraron proveedores a eliminar" }
+    }
+    
+    const {productos} = await this.productosService.todosProductos(req)
+    const productosConProveedores = productos.filter(p => p.todos_proveedores.length > 0)
+    for await(const proveedor of proveedores) {
+      await this.limpiarProveedor(req, proveedor, productosConProveedores)
     }
 
     await this.proveedoresRepository.remove(proveedores)
 
     return { msg: "Todos los proveedores se eliminaron" }
+  }
+
+
+
+  async limpiarProveedor(req: RequestConUsuario, proveedor: Proveedores, productos: Productos[]) {
+    for await (const producto of productos) {
+      if(producto.proveedor == proveedor._id.toString()) {  //si coincide con el seleccionado por default
+        const encontro = producto.todos_proveedores.find(p => p !== producto.proveedor) //busco otro proveedor para poner como default
+        if(encontro) {
+          producto.proveedor = encontro
+        } else {
+          producto.proveedor = ''
+        }
+      }
+      producto.todos_proveedores = producto.todos_proveedores.filter(p => p !== proveedor._id.toString()) //elimino de la lista de todos los proveedores
+      await this.productosService.editarUnProducto(req, producto._id.toString(), { producto })
+      
+    }
   }
 }
