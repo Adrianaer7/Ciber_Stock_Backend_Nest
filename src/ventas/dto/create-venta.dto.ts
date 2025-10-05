@@ -36,8 +36,8 @@ export class CreateVentaDto {
     @Min(1, { message: "Cotizacion del dólar del producto no válida" })
     dolar: number
 
-    @IsString({ message: "Precio en dólar del producto no válido" })
-    precioEnDolar: string
+    @IsNumber({}, { message: "Precio en dólares del producto no válido" })
+    precioEnDolar: number
 
     @IsBoolean({ message: "Propiedad existe producto inválida" })
     existeProducto: boolean;

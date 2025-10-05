@@ -26,7 +26,7 @@ export class Ventas {
     dolar: number
 
     @Column('number')
-    precioEnDolar: string
+    precioEnDolar: number
 
     @Column('number')
     precioEnArs: number
