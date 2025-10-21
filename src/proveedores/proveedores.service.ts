@@ -140,7 +140,7 @@ export class ProveedoresService {
     
     const {productos} = await this.productosService.todosProductos(req)
     const productosConProveedores = productos.filter(p => p.todos_proveedores.length > 0)
-    for await(const proveedor of proveedores) {
+    for (const proveedor of proveedores) {
       await this.limpiarProveedor(req, proveedor, productosConProveedores)
     }
 
@@ -152,7 +152,7 @@ export class ProveedoresService {
 
 
   async limpiarProveedor(req: RequestConUsuario, proveedor: Proveedores, productos: Productos[]) {
-    for await (const producto of productos) {
+    for (const producto of productos) {
       if(producto.proveedor == proveedor._id.toString()) {  //si coincide con el seleccionado por default
         const encontro = producto.todos_proveedores.find(p => p !== producto.proveedor) //busco otro proveedor para poner como default
         if(encontro) {

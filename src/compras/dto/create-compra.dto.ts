@@ -1,4 +1,4 @@
-import { IsBoolean, IsInt, IsNotEmpty, Min, ValidateNested } from "class-validator";
+import {  IsInt, IsNotEmpty, Min, ValidateNested } from "class-validator";
 import { CreateProductoDto } from "src/productos/dto/create-producto.dto";
 import { Type } from 'class-transformer';
 

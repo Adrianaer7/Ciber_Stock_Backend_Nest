@@ -156,7 +156,7 @@ export class RubrosService {
     }
 
     const {productos} = await this.productosService.todosProductos(req)
-    for await(const rubro of rubros) {
+    for (const rubro of rubros) {
       const productosConRubro = productos.filter(p => p.rubro == rubro.nombre)
       await this.limpiarPrecios(req, productosConRubro)
     }
@@ -169,7 +169,7 @@ export class RubrosService {
   
 
   async limpiarPrecios(req: RequestConUsuario, productos: Productos[]) {
-    for await (const producto of productos) {
+    for (const producto of productos) {
       producto.rubro = ''
       producto.rubroValor = 0
       producto.precio_venta = 0
