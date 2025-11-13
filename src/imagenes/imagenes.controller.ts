@@ -1,5 +1,4 @@
 import { Controller, Post, UseGuards, UseInterceptors, UploadedFile, BadRequestException, Request, HttpCode, HttpStatus } from '@nestjs/common';
-import { ImagenesService } from './imagenes.service';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { RequestConUsuario } from 'src/helpers/interfaces';
@@ -11,20 +10,20 @@ import { environments } from 'src/environments/environment';
 
 @Controller('imagenes')
 export class ImagenesController {
-  constructor(private readonly imagenesService: ImagenesService) { }
+
+  constructor() { }
 
   @UseGuards(AuthGuard)
   @Post()
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(
+  @UseInterceptors( //solo se ejecuta cuando existe un archivo
     FileInterceptor('archivo', {
-      fileFilter: fileFilter,
+      fileFilter,
+      limits: { fileSize: 5 * 1024 * 1024 }, // 5MB máximo
       storage: diskStorage({
         destination: './static/productos',
         filename: fileNamer,
-
-      }),
-      limits: { fileSize: 5 * 1024 * 1024 }, // 5MB máximo
+      })
     })
   )
   guardarImagen(@Request() req: RequestConUsuario, @UploadedFile() file: Express.Multer.File) {
