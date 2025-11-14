@@ -48,7 +48,7 @@ export class ComprasService {
       laCompra.modelo = modelo
       laCompra.codigo = codigo
       laCompra.historial = []
-      laCompra.descripcion =  (nombre + marca + modelo + barras + factura + notas).replace(/\s\s+/g, ' ').replace(/\s+/g, '')
+      laCompra.descripcion =  (nombre + marca + modelo + barras + factura + notas).replaceAll(/\s+/g, '')
       laCompra.creador = creador
       laCompra.creado = new Date()
       
@@ -75,7 +75,7 @@ export class ComprasService {
       compraPasada.marca = marca
       compraPasada.modelo = modelo
       compraPasada.historial.push(datos)
-      compraPasada.descripcion = (nombre + marca + modelo + barras + factura + notas).replace(/\s\s+/g, ' ').replace(/\s+/g, '')
+      compraPasada.descripcion = (nombre + marca + modelo + barras + factura + notas).replaceAll(/\s+/g, '')
       compraPasada.creado = new Date()
 
       purchase = await this.comprasRepository.save(compraPasada)
@@ -86,7 +86,7 @@ export class ComprasService {
       compraPasada.nombre = nombre
       compraPasada.marca = marca
       compraPasada.modelo = modelo
-      compraPasada.descripcion = (nombre + marca + modelo + barras + factura + notas).replace(/\s\s+/g, ' ').replace(/\s+/g, '')
+      compraPasada.descripcion = (nombre + marca + modelo + barras + factura + notas).replaceAll(/\s+/g, '')
 
       purchase = await this.comprasRepository.save(compraPasada)
     }

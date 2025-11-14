@@ -22,7 +22,7 @@ export class ProveedoresService {
   async agregarProveedor(req: RequestConUsuario, createProveedoreDto: CreateProveedorDto) {
     const { nombre, empresa, telEmpresa, telPersonal, email } = createProveedoreDto
 
-    const datos = (nombre + empresa + telPersonal + telEmpresa + email).replace(/\s\s+/g, ' ').replace(/\s+/g, '')
+    const datos = (nombre + empresa + telPersonal + telEmpresa + email).replaceAll(/\s+/g, '')
     const creador = new ObjectId(req.usuario._id)
     const _id = new ObjectId()
     let nuevoProveedor = this.proveedoresRepository.create({
@@ -102,7 +102,8 @@ export class ProveedoresService {
     //Para asegurarme no guardo los datos que vienen del front
     proveedor._id = _id
     proveedor.creador = creador
-    proveedor.datos = (nombre + empresa + telPersonal + telEmpresa + email).replace(/\s\s+/g, ' ').replace(/\s+/g, '')
+    proveedor.datos = (nombre + empresa + telPersonal + telEmpresa + email).replaceAll(/\s+/g, '');
+
 
     const provider = await this.proveedoresRepository.save(proveedor)
     await this.socketService.emitirProductos()

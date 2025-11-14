@@ -41,7 +41,7 @@ export class ProductosService {
       createProductoDto.faltante = true
     }
 
-    const descripcion = (codigo + nombre + marca + modelo + barras + notas).replace(/\s\s+/g, ' ').replace(/\s+/g, '')
+    const descripcion = (codigo + nombre + marca + modelo + barras + notas).replaceAll(/\s+/g, '')
     const creador = new ObjectId(req.usuario._id)
     const _id = new ObjectId()
     const nuevoProducto = this.productosRepository.create({
@@ -203,7 +203,7 @@ export class ProductosService {
 
     Object.assign(product, updateProductoDto.producto);
 
-    product.descripcion = (codigo + nombre + marca + modelo + barras + notas).replace(/\s\s+/g, ' ').replace(/\s+/g, '');
+    product.descripcion = (codigo + nombre + marca + modelo + barras + notas).replaceAll(/\s+/g, '');
 
     await this.calcularPrecios(req, product, updateProductoDto.precio);
 
