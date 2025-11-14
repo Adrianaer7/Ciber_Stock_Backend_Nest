@@ -6,7 +6,7 @@ import { environments } from 'src/environments/environment';
 @Injectable()
 export class MailService {
     constructor(
-        private mailerService: MailerService
+        private readonly mailerService: MailerService
     ) { }
 
     async emailRegistro(datos) {

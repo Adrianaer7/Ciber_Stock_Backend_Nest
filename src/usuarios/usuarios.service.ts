@@ -17,7 +17,7 @@ export class UsuariosService {
   constructor(
     @InjectRepository(Usuarios)
     private readonly userRepository: Repository<Usuarios>,
-    private emailService: MailService
+    private readonly emailService: MailService
   ) { }
 
   async nuevoUsuario(createUsuarioDto: CreateUsuarioDto) {
@@ -59,10 +59,10 @@ export class UsuariosService {
 
   async traerTodos() {
     const usuarios = await this.userRepository.find()
-    if (!usuarios.length) {
-      return { msg: "No existen usuarios creados" }
-    } else {
+    if (usuarios.length) {
       return usuarios
+    } else {
+      return { msg: "No existen usuarios creados" }
     }
   }
 
@@ -119,8 +119,8 @@ export class UsuariosService {
     const usuario = await this.userRepository.findOneBy({ token })
     if (!usuario) throw new NotFoundException("Token no válido")
 
-    usuario.password = bcrypt.hashSync(contraseña, 10),
-      usuario.token = ""
+    usuario.password = bcrypt.hashSync(contraseña, 10)
+    usuario.token = ""
 
     this.userRepository.save(usuario)
     return { msg: "Contraseña modificada correctamente" }

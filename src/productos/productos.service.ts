@@ -5,8 +5,8 @@ import { Productos } from './entities/producto.entity';
 import { FindManyOptions, Repository } from 'typeorm';
 import { ObjectId } from 'mongodb';
 import { UpdateProductoDto } from './dto/update-producto.dto';
-import * as path from 'path';
-import * as fs from 'fs';
+import * as path from 'node:path';
+import * as fs from 'node:fs';
 import { VentasService } from 'src/ventas/ventas.service';
 import { PorcentajesService } from 'src/porcentajes/porcentajes.service';
 import { Porcentajes } from 'src/porcentajes/entities/porcentajes.entity';
@@ -35,7 +35,7 @@ export class ProductosService {
   ) { }
 
   async crearProducto(req: RequestConUsuario, createProductoDto: CreateProductoDto) {
-    const { codigo, nombre, marca, modelo, barras, proveedor, notas } = createProductoDto
+    const { codigo, nombre, marca, modelo, barras, notas } = createProductoDto
 
     if (createProductoDto.disponibles <= createProductoDto.limiteFaltante && createProductoDto.añadirFaltante) {
       createProductoDto.faltante = true
@@ -246,7 +246,7 @@ export class ProductosService {
     }
   }
 
-  async calcularPrecios(req: RequestConUsuario, producto: CreateProductoDto, precio?: Number) {
+  async calcularPrecios(req: RequestConUsuario, producto: CreateProductoDto, precio?: number) {
     let { precio_venta, valor_dolar_compra, precio_compra_peso } = producto;
 
     let porcentajeEfectivo: Porcentajes | boolean = await this.porcentajeService.findOneBy(req, "EFECTIVO")
@@ -261,23 +261,23 @@ export class ProductosService {
     //compro en dolar
     if (precio_venta > 0 && valor_dolar_compra > 0) {
       const res1 = Number(precio_venta) / Number(valor_dolar_compra);
-      const res2 = parseFloat((res1 * Number(precio)).toFixed(2));
+      const res2 = Number.parseFloat((res1 * Number(precio)).toFixed(2));
       producto.precio_venta_conocidos = res2;
       producto.precio_venta_efectivo = this.calcularPrecio(res2, porcentajeEfectivo.comision);
       producto.precio_venta_tarjeta = this.calcularPrecio(res2, porcentajeTarjeta.comision);
-      producto.precio_venta_ahoraDoce = this.calcularPrecio(parseFloat(producto.precio_venta_tarjeta.toString()), porcentajeAhoraDoce.comision);
-      producto.precio_venta_cuotas = parseFloat((parseFloat(producto.precio_venta_ahoraDoce.toString()) / 12).toFixed(2));
+      producto.precio_venta_ahoraDoce = this.calcularPrecio(Number.parseFloat(producto.precio_venta_tarjeta.toString()), porcentajeAhoraDoce.comision);
+      producto.precio_venta_cuotas = Number.parseFloat((Number.parseFloat(producto.precio_venta_ahoraDoce.toString()) / 12).toFixed(2));
     }
 
     //compro en peso
     if (precio_venta > 0 && precio_compra_peso > 0) {
-      const res1 = parseFloat((precio_venta / valor_dolar_compra).toFixed(2));
-      const res2 = parseFloat((Number(res1) * Number(precio)).toFixed(2));
+      const res1 = Number.parseFloat((precio_venta / valor_dolar_compra).toFixed(2));
+      const res2 = Number.parseFloat((Number(res1) * Number(precio)).toFixed(2));
       producto.precio_venta_conocidos = res2;
       producto.precio_venta_efectivo = this.calcularPrecio(res2, porcentajeEfectivo.comision);
       producto.precio_venta_tarjeta = this.calcularPrecio(res2, porcentajeTarjeta.comision);
-      producto.precio_venta_ahoraDoce = this.calcularPrecio(parseFloat(producto.precio_venta_tarjeta.toString()), porcentajeAhoraDoce.comision);
-      producto.precio_venta_cuotas = parseFloat((parseFloat(producto.precio_venta_ahoraDoce.toString()) / 12).toFixed(2));
+      producto.precio_venta_ahoraDoce = this.calcularPrecio(Number.parseFloat(producto.precio_venta_tarjeta.toString()), porcentajeAhoraDoce.comision);
+      producto.precio_venta_cuotas = Number.parseFloat((Number.parseFloat(producto.precio_venta_ahoraDoce.toString()) / 12).toFixed(2));
     }
 
     return producto
@@ -285,7 +285,7 @@ export class ProductosService {
   }
 
   calcularPrecio(precioBase, comision) {
-    return parseFloat(((precioBase * (100 + Number(comision))) / 100).toFixed(2));
+    return Number.parseFloat(((precioBase * (100 + Number(comision))) / 100).toFixed(2));
   }
 
 

@@ -25,19 +25,7 @@ export class GarantiasService {
       const creador = new ObjectId(req.usuario._id)
 
       //si no existe una garantia con el id del producto, creo una nueva
-      if (!laGarantia) {
-        const nuevaGarantia = new Garantias()
-        nuevaGarantia._id = new ObjectId()
-        nuevaGarantia.idProducto = producto._id,
-        nuevaGarantia.codigo = codigo,
-        nuevaGarantia.creador = creador
-        nuevaGarantia.detalles = [{
-          caducidad: garantia.toUpperCase(),
-          proveedor
-        }]
-        return await this.garantiasRepository.save(nuevaGarantia)
-
-      } else {
+      if (laGarantia) {
         const { detalles } = laGarantia
         const indice = detalles.map(detalle => detalle.proveedor).indexOf(proveedor)    //si el proveedor que traigo del body es el mismo que está en el detalle, devuelvo su posicion en el array de detalles, sino devuelvo -1
         let detalle = {
@@ -53,6 +41,19 @@ export class GarantiasService {
           laGarantia.detalles[indice].caducidad = garantia.toUpperCase()
           return await this.garantiasRepository.save(laGarantia)
         }
+      } else {
+        const nuevaGarantia = new Garantias()
+        nuevaGarantia._id = new ObjectId()
+        nuevaGarantia.idProducto = producto._id
+        nuevaGarantia.codigo = codigo
+        nuevaGarantia.creador = creador
+        nuevaGarantia.detalles = [
+          {
+            caducidad: garantia.toUpperCase(),
+            proveedor
+          }
+        ]
+        return await this.garantiasRepository.save(nuevaGarantia)
       }
     }
   }

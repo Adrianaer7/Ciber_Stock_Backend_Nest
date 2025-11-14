@@ -49,7 +49,7 @@ export class ComprasService {
       laCompra.codigo = codigo
       laCompra.historial = []
       laCompra.descripcion =  (nombre + marca + modelo + barras + factura + notas).replace(/\s\s+/g, ' ').replace(/\s+/g, '')
-      laCompra.creador = creador,
+      laCompra.creador = creador
       laCompra.creado = new Date()
       
       laCompra.historial.push({

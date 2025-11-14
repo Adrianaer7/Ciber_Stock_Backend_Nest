@@ -4,7 +4,7 @@ import * as express from 'express';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ValidationPipe } from '@nestjs/common';
 import { environments } from './environments/environment';
-import { join } from 'path';
+import { join } from 'node:path';
 import { CustomBadRequestFilter } from './filters/customBadRequest.filter';
 import { corsOptions } from './config/cors.config';
 

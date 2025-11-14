@@ -7,8 +7,8 @@ import { environments } from "src/environments/environment";
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
-    private jwtService: JwtService,
-    private authService: AuthService,
+    private readonly jwtService: JwtService,
+    private readonly authService: AuthService,
   ) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -23,7 +23,8 @@ export class AuthGuard implements CanActivate {
     let payload: JwtPayload
     try {
       payload = await this.jwtService.verifyAsync(elToken, { secret: environments.SECRETA });
-    } catch (error) {
+    } catch (e) {
+      console.log(e)
       throw new UnauthorizedException('Token inválido');
     }
 

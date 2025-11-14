@@ -1,5 +1,10 @@
 export const generarId = (): string => {
-    const random = Math.random().toString(32).substring(2);
-    const fecha = Date.now().toString(32);
-    return random + fecha;
+    const array = new Uint8Array(16);
+    crypto.getRandomValues(array);
+
+    const hexId = Array.from(array)
+        .map(b => b.toString(16).padStart(2, "0"))
+        .join("");
+
+    return hexId;
 }

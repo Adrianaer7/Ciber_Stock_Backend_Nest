@@ -1,4 +1,4 @@
-import { Controller, Get, Param, UseGuards, Request, Put } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards, Request } from '@nestjs/common';
 import { FaltantesService } from './faltantes.service';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { RequestConUsuario } from 'src/helpers/interfaces';

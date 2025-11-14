@@ -16,9 +16,9 @@ export class SocketGateways implements OnGatewayConnection, OnGatewayDisconnect 
   constructor(
     private readonly socketService: SocketService,
     private readonly jwtService: JwtService,
-    private authService: AuthService,
+    private readonly authService: AuthService,
     @Inject('ACTIVE_SESSIONS_MAP')   // Inyectar el proveedor - Mapa para almacenar sesiones activas
-    private activeSessions: Map<string, { clientId: string; nombre: string }>
+    private readonly activeSessions: Map<string, { clientId: string; nombre: string }>
   ) { }
 
   //le envia la señal al socket.on('connect', del front indicando que se conectó. No puedo cambiar handleConnection por otro nombre por el OnGatewayConnection, lo mismo con el handleDisconnect del OnGatewayDisconnect
@@ -34,12 +34,12 @@ export class SocketGateways implements OnGatewayConnection, OnGatewayDisconnect 
         }
         this.activeSessions.set(usuario._id.toString(), { clientId: client.id, nombre: usuario.nombre });
         console.log(`Cliente conectado: ${usuario.nombre}`);
-        //this.server.emit('clients-updated', this.getConnectedClients());
       } else {
         client.disconnect()
         return { redireccionar: true }
       }
-    } catch (error) {
+    } catch (e) {
+      console.log(e)
       client.disconnect()
       return { redireccionar: true }
     }
@@ -76,7 +76,8 @@ export class SocketGateways implements OnGatewayConnection, OnGatewayDisconnect 
     let payload: JwtPayload
     try {
       payload = await this.jwtService.verifyAsync(token, { secret: environments.SECRETA });
-    } catch (error) {
+    } catch (e) {
+      console.log(e)
       return false
     }
 

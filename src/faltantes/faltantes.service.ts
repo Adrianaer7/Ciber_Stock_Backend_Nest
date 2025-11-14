@@ -17,15 +17,15 @@ export class FaltantesService {
     if (!product) {
       throw new NotFoundException("El producto no existe")
     }
-    if (!product.faltante) {
+    if (product.faltante) {
+      return await this.eliminarFaltante(req, id, product)
+    } else {
       product.faltante = true;
       product.limiteFaltante = product.disponibles;
       product.añadirFaltante = true;
       const producto = await this.productosService.editarUnProducto(req, id, { producto: product })
       await this.socketService.emitirProductos()
       return producto
-    } else {
-      return await this.eliminarFaltante(req, id, product)
     }
 
   }
