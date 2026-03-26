@@ -77,7 +77,7 @@ export class SocketGateways implements OnGatewayConnection, OnGatewayDisconnect 
     try {
       payload = await this.jwtService.verifyAsync(token, { secret: environments.SECRETA });
     } catch (e) {
-      console.log(e)
+      console.log(e.message)
       return false
     }
 

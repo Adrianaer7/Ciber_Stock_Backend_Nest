@@ -1,4 +1,4 @@
-import { BeforeInsert, BeforeUpdate, Column, CreateDateColumn, Entity, ObjectIdColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, CreateDateColumn, Entity, ObjectIdColumn, UpdateDateColumn } from "typeorm";
 import { ObjectId } from "mongodb";
 import { Historial } from "src/helpers/interfaces";
 
@@ -33,6 +33,9 @@ export class Compras {
 
     @CreateDateColumn({ type: 'timestamp' })
     creado: Date
+
+    @Column({ type: 'date' })
+    actualizacionCompra: Date
 
     @Column('int')
     __v?: number

@@ -51,8 +51,9 @@ export class ComprasService {
       laCompra.descripcion =  (nombre + marca + modelo + barras + factura + notas).replaceAll(/\s+/g, '')
       laCompra.creador = creador
       laCompra.creado = new Date()
+      laCompra.actualizacionCompra = new Date()
       
-      laCompra.historial.push({
+      laCompra.historial.unshift({
         cantidad: createCompraDto.cantidad,
         fecha_compra, 
         precio_compra_dolar,
@@ -68,15 +69,16 @@ export class ComprasService {
       purchase = await this.comprasRepository.save(laCompra)
     }
 
-    if (compra && createCompraDto.cantidad) {    //si existe el producto en el listado de compras y la cantidad es mayora a 0, edito el producto entero
+    if (compra && createCompraDto.cantidad) {    //si existe el producto en el listado de compras y la cantidad es mayor a 0, edito el producto entero
       const compraPasada: Compras = compra //guardo el primer y unico objeto coincidente
       const datos = { cantidad: createCompraDto.cantidad, fecha_compra, precio_compra_dolar, precio_compra_peso, arsAdolar, valor_dolar_compra, proveedor, barras, factura, garantia }
       compraPasada.nombre = nombre
       compraPasada.marca = marca
       compraPasada.modelo = modelo
-      compraPasada.historial.push(datos)
+      compraPasada.historial.unshift(datos)
       compraPasada.descripcion = (nombre + marca + modelo + barras + factura + notas).replaceAll(/\s+/g, '')
       compraPasada.creado = new Date()
+      compraPasada.actualizacionCompra = new Date()
 
       purchase = await this.comprasRepository.save(compraPasada)
     }
@@ -124,11 +126,11 @@ export class ComprasService {
         creador
       },
       order: {
-        creado: "DESC"
+        actualizacionCompra: "DESC"
       }
     }
     let todas = await this.comprasRepository.find(options)
-    todas = todas.map(compras => compras.historial.sort((a, b) => a.fecha_compra > b.fecha_compra ? 1 : -1) && compras)
+    todas = todas.map(compras => compras.historial.sort((a, b) => b.fecha_compra > a.fecha_compra ? 1 : -1) && compras)
     return { todas }
   }
 

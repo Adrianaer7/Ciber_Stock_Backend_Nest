@@ -24,7 +24,7 @@ export class AuthGuard implements CanActivate {
     try {
       payload = await this.jwtService.verifyAsync(elToken, { secret: environments.SECRETA });
     } catch (e) {
-      console.log(e)
+      console.log(e.message)
       throw new UnauthorizedException('Token inválido');
     }
 
