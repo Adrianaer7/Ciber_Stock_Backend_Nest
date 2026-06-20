@@ -90,10 +90,10 @@ export class PorcentajesService {
     const _id = new ObjectId(porcentaje._id)
 
     Object.assign(porcentaje, updatePorcentajeDto)
-    updatePorcentajeDto._id = _id
-    updatePorcentajeDto.creador = creador
+    porcentaje._id = _id
+    porcentaje.creador = creador
 
-    const percentaje = await this.porcentajesRepository.save(updatePorcentajeDto)
+    const percentaje = await this.porcentajesRepository.save(porcentaje)
     return { porcentaje: percentaje }
   }
 

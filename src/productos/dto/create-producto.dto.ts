@@ -1,10 +1,6 @@
-import { IsArray, IsBoolean, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from "class-validator";
-import { ObjectId } from "mongodb";
+import { IsArray, IsBoolean, IsInt, IsNotEmpty, IsNumber, IsString, Min } from "class-validator";
 
 export class CreateProductoDto {
-    @IsOptional()
-    _id?: ObjectId
-
     @IsNotEmpty({ message: "El nombre del producto es obligatorio" })
     @IsString({ message: "Nombre no válido" })
     nombre: string
@@ -102,14 +98,4 @@ export class CreateProductoDto {
 
     @IsInt({ message: "La cantidad de disponibles no es válida" })
     disponibles: number
-
-    @IsOptional()
-    creador?: ObjectId
-
-    @IsOptional()
-    creado?: Date
-
-    @IsOptional()
-    @IsString({ message: "Descripción no válida" })
-    descripcion: string
 }

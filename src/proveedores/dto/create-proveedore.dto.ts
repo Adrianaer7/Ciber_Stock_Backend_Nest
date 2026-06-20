@@ -1,11 +1,6 @@
-import { IsInt, IsNotEmpty, IsOptional, IsString } from "class-validator";
-import { ObjectId } from "mongodb";
+import { IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class CreateProveedorDto {
-
-    @IsOptional({ message: "Formato id inválido" })
-    @IsString({ message: "Formato id inválido" })
-    _id?: ObjectId
 
     @IsString({ message: "Nombre del proveedor no válido" })
     nombre: string
@@ -21,20 +16,6 @@ export class CreateProveedorDto {
     telEmpresa: string
 
     @IsOptional()
-    email?: string;
-
-    @IsOptional({ message: "Formato datos inválido" })
-    @IsString({ message: "Formato datos inválido" })
-    @IsNotEmpty({ message: "Datos está vacío" })
-    datos?: string
-
-    @IsOptional({ message: "Formato creador inválido" })
-    @IsString({ message: "Formato creador inválido" })
-    @IsNotEmpty({ message: "Creador está vacío" })
-    creador?: ObjectId
-
-    @IsOptional({ message: "Formato creador inválido" })
-    @IsInt({ message: "Formato creador inválido" })
-    @IsNotEmpty({ message: "Creador está vacío" })
-    __v?: number
+    @IsString({ message: "Email no válido" })
+    email?: string
 }

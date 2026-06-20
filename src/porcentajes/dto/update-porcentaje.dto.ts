@@ -1,13 +1,16 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreatePorcentajeDto } from './create-porcentaje.dto';
-import { ObjectId } from 'mongodb';
-import { IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, Min } from 'class-validator';
 
-export class UpdatePorcentajeDto extends PartialType(CreatePorcentajeDto) {
-    @IsString({ message: 'El id debe ser string' })
-    _id: ObjectId
+export class UpdatePorcentajeDto {
+    @IsNotEmpty({ message: 'El nombre es requerido' })
+    @IsString({ message: 'El nombre debe ser un texto' })
+    nombre: string;
 
-    @IsOptional()
-    @IsString({ message: 'El id del creador debe ser un string' })
-    creador: ObjectId
+    @IsNotEmpty({ message: 'La comision es requerida' })
+    @IsNumber({}, { message: 'La comision debe ser un numero' })
+    @Min(0, { message: 'La comision debe ser mayor a 0' })
+    comision: number;
+
+    @IsNotEmpty({ message: 'El tipo es requerido' })
+    @IsString({ message: 'El tipo debe ser un texto' })
+    tipo: string;
 }
